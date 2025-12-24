@@ -1,0 +1,43 @@
+name: BidDeed Conversational Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'User query to process'
+        required: true
+        type: string
+      session_id:
+        description: 'Session ID'
+        required: false
+        default: 'cli'
+        type: string
+  repository_dispatch:
+    types: [agent-query]
+
+env:
+  SUPABASE_URL: https://mocerqjnksmhcjzxrewo.supabase.co
+  SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install httpx langgraph
+      - name: Run Agent
+        run: python src/agents/foreclosure_agent.py
+        env:
+          USER_QUERY: ${{ github.event.inputs.query || github.event.client_payload.query || 'Show BID recommendations' }}
+          SESSION_ID: ${{ github.event.inputs.session_id || github.event.client_payload.session_id || 'workflow' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-results
+          path: output/
+          retention-days: 7
