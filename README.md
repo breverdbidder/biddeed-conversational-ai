@@ -1,102 +1,108 @@
-# BidDeed.AI Conversational Intelligence
+# BidDeed.AI Conversational Agent
 
-An AI-powered conversational interface for foreclosure investment analysis in Brevard County, Florida.
+Manus-style autonomous foreclosure research agent for Brevard County, Florida.
 
-**Architecture inspired by [OpenManus](https://github.com/FoundationAgents/OpenManus)** - The open-source AI agent framework.
+## 🚀 Live Demo
 
-## 🏗️ Architecture
+**https://brevard-bidder-landing.pages.dev/agent**
+
+## Architecture
 
 ```
-BidDeed Conversational AI
+┌─────────────────────────────────────────────────────────────┐
+│                  BidDeed Conversational Agent               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────┐     ┌────────────────────────────────┐│
+│  │   CHAT PANEL    │     │      AGENT WORKSPACE           ││
+│  │                 │     │                                ││
+│  │  💬 Messages    │     │  📊 Activity Log               ││
+│  │  🎤 Voice Input │     │  🏠 Property Results Grid      ││
+│  │  ⚡ Quick Actions│     │  💻 Terminal View              ││
+│  └─────────────────┘     └────────────────────────────────┘│
+│                                                             │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │              LangGraph Agent Pipeline                   ││
+│  │                                                         ││
+│  │  query_parser → property_search → investment_analysis   ││
+│  │                                  ↓                      ││
+│  │                         response_generator              ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Features
+
+- **Split-screen UI** - Chat + Agent Workspace
+- **Voice Input** - Web Speech API integration
+- **LangGraph Pipeline** - ReAct pattern agent
+- **Real Data** - 22 Brevard County foreclosures
+- **ML Scores** - 64.4% accuracy predictions
+
+## Stack
+
+| Component | Technology |
+|-----------|------------|
+| Frontend | Vanilla JS + CSS |
+| Agent | LangGraph (Python) |
+| Database | Supabase + pgvector |
+| Hosting | Cloudflare Pages |
+| CI/CD | GitHub Actions |
+
+## Files
+
+```
+biddeed-conversational-ai/
 ├── src/
-│   ├── agents/
-│   │   ├── base.py         # BaseAgent, ReActAgent (OpenManus pattern)
-│   │   └── biddeed_agent.py # Main BidDeed Agent
-│   ├── tools/
-│   │   └── foreclosure_tools.py # Domain-specific tools
-│   ├── flows/              # LangGraph workflows
-│   ├── llm/                # LLM integrations
-│   ├── memory/             # Conversation memory
-│   └── prompts/            # Agent prompts
-├── components/             # React UI components
-├── config/                 # Configuration
-└── public/                 # Static frontend
-    └── index.html          # Split-screen chat UI
+│   └── agents/
+│       └── foreclosure_agent.py    # LangGraph agent
+├── sql/
+│   └── pgvector_migration.sql      # Vector search setup
+├── .github/
+│   └── workflows/
+│       └── agent_pipeline.yml      # Autonomous execution
+└── README.md
 ```
 
-## 🔧 Tools (Following OpenManus BaseTool Pattern)
+## Usage
 
-| Tool | Description |
-|------|-------------|
-| `property_search` | Search foreclosure properties by address, city, ZIP, or case number |
-| `bcpao_lookup` | Get property details from Brevard County Property Appraiser |
-| `lien_discovery` | Discover liens and encumbrances via AcclaimWeb |
-| `max_bid_calculator` | Calculate max bid using formula: (ARV×70%)-Repairs-$10K-MIN($25K,15%ARV) |
-| `auction_calendar` | Get upcoming auction dates and locations |
+### Web Interface
+Visit https://brevard-bidder-landing.pages.dev/agent
 
-## 🤖 Agent Hierarchy
-
-```
-BaseAgent (abstract)
-    ↓
-ReActAgent (Think-Act-Observe loop)
-    ↓
-ToolCallAgent (Tool execution)
-    ↓
-BidDeedAgent (Foreclosure domain expert)
-```
-
-## ✨ Features
-
-### Split-Screen UI
-- **Left Panel**: Conversational chat interface
-- **Right Panel**: Agent workspace with activity log, property cards, map
-
-### Voice Input
-- Speech-to-text for hands-free queries
-- Works on mobile and desktop
-
-### Real-Time Agent Activity
-- Tool execution logs
-- Property search results
-- Calculation breakdowns
-
-## 🚀 Quick Start
-
+### GitHub Actions
 ```bash
-# Clone
-git clone https://github.com/breverdbidder/biddeed-conversational-ai
-cd biddeed-conversational-ai
-
-# Run locally
-python -m http.server 8080 --directory public
-
-# Open http://localhost:8080
+# Trigger agent via workflow dispatch
+gh workflow run agent_pipeline.yml -f query="Show BID recommendations"
 ```
 
-## 🔗 Live URLs
+### API (Future)
+```javascript
+// Repository dispatch
+await fetch('https://api.github.com/repos/breverdbidder/biddeed-conversational-ai/dispatches', {
+  method: 'POST',
+  headers: { Authorization: 'token YOUR_TOKEN' },
+  body: JSON.stringify({
+    event_type: 'agent-query',
+    client_payload: { query: 'Analyze 923 Slocum St' }
+  })
+});
+```
 
-- **Chat**: https://biddeed-conversational-ai.pages.dev
-- **Map**: https://brevard-bidder-landing.pages.dev/map
+## Query Examples
 
-## 📊 Data Sources
+| Query | Response |
+|-------|----------|
+| "Show BID recommendations" | List of BID-rated properties |
+| "Next auction date" | Jan 7, 2025 details |
+| "Analyze 923 Slocum St" | Full property analysis |
+| "Best opportunities" | Top ML-scored investments |
+| "Properties to skip" | SKIP list with reasons |
 
-- **Supabase**: `auction_results` table with 22 real foreclosures
-- **BCPAO GIS API**: Property details, assessments, photos
-- **AcclaimWeb**: Lien and mortgage records (production)
-- **RealForeclose**: Auction schedules (production)
+## Inspired By
 
-## 🧠 Inspired By
-
-- [OpenManus](https://github.com/FoundationAgents/OpenManus) - Multi-agent AI framework
-- [MetaGPT](https://github.com/geekan/MetaGPT) - Agent orchestration
-- [LangGraph](https://github.com/langchain-ai/langgraph) - Workflow graphs
-
-## 📜 License
-
-MIT - Everest Capital USA
+- [OpenManus](https://github.com/FoundationAgents/OpenManus) - Open-source AI agent framework
+- [LangGraph](https://github.com/langchain-ai/langgraph) - Agent orchestration
 
 ---
 
-**BidDeed.AI** - Agentic AI for Foreclosure Investment  
-Built by the team at Everest Capital USA
+**Everest Capital USA** | BidDeed.AI V16.5.0
