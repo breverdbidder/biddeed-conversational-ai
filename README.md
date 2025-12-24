@@ -1,91 +1,119 @@
-# BidDeed.AI Conversational Agent
+# BidDeed.AI Conversational Foreclosure Agent
 
-**Split-screen autonomous AI agent for tax deed & foreclosure investing**
+🤖 **Manus-inspired autonomous AI agent for Brevard County foreclosure research**
+
+## Live Demo
+
+🌐 **https://biddeed-conversational-ai.pages.dev**
+
+## Features
+
+### 💬 Split-Screen Interface
+- **Chat Panel**: Natural language conversation with Claude AI
+- **Agent Workspace**: Live activity feed, property results, pipeline progress
+- **Quick Actions**: One-click common queries
+
+### 🎙️ Voice Activation
+- Web Speech API integration
+- Click microphone to speak queries
+- Automatic speech-to-text conversion
+
+### 🤖 Autonomous Agent
+- **NLP Query Parser**: Understands foreclosure-specific intents
+- **Multi-Node Workflow**: LangGraph orchestrator with 8 processing nodes
+- **Context Engineering**: Manus-inspired architecture for complex tasks
+
+### 📊 Foreclosure Intelligence
+- 22 real Brevard County properties
+- ML-powered recommendations (BID/REVIEW/SKIP)
+- Max bid calculations using BidDeed formula
+- Plaintiff pattern analysis
+- Lien priority detection
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  BidDeed.AI Conversational Agent                    │
-├──────────────────────┬──────────────────────────────┤
-│                      │                              │
-│   CONVERSATION       │    AGENT WORKSPACE           │
-│   (40% width)        │    (60% width)               │
-│                      │                              │
-│  💬 Natural Language │  🗺️ Interactive Map          │
-│     Query Interface  │  📊 Live Property Analysis   │
-│                      │  🔍 Title Research           │
-│  🎤 Voice Commands   │  💰 Bid Calculations         │
-│                      │  📈 Market Intelligence      │
-│  📝 Chat History     │                              │
-│                      │  [Autonomous Agent Activity] │
-│  [User Input]        │  ✓ Searching databases       │
-│                      │  ✓ Analyzing comparables     │
-│                      │  ✓ Checking liens            │
-│                      │  ✓ Calculating ROI           │
-│                      │                              │
-└──────────────────────┴──────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                BidDeed.AI Conversational Agent              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────┐         ┌─────────────────┐           │
+│  │   Chat Panel    │         │  Agent Workspace │           │
+│  │                 │         │                  │           │
+│  │ • Voice input   │◀───────▶│ • Activity feed  │           │
+│  │ • Quick actions │         │ • Results tab    │           │
+│  │ • Messages      │         │ • Pipeline view  │           │
+│  └─────────────────┘         └─────────────────┘           │
+│           │                           │                     │
+│           ▼                           ▼                     │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              LangGraph Orchestrator                  │   │
+│  │                                                      │   │
+│  │  Node 1: Parse Query      Node 5: Max Bid Calc      │   │
+│  │  Node 2: Fetch Properties Node 6: ML Scoring        │   │
+│  │  Node 3: Enrich (BCPAO)   Node 7: Generate Report   │   │
+│  │  Node 4: Lien Analysis    Node 8: Save Results      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│           │                           │                     │
+│           ▼                           ▼                     │
+│  ┌─────────────┐           ┌─────────────────┐             │
+│  │  Supabase   │           │  Claude API     │             │
+│  │  Database   │           │  (Sonnet 4)     │             │
+│  └─────────────┘           └─────────────────┘             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Query Examples
+
+```
+"Show me BID properties for Jan 7"
+"Analyze 923 Slocum St Palm Bay"
+"Which plaintiffs have highest third-party rates?"
+"Explain lien priority in foreclosures"
+"Run full pipeline on next auction"
 ```
 
 ## Tech Stack
 
-- **Frontend:** React 18 + Vite + Tailwind CSS
-- **AI:** Claude Sonnet 4.5 (Anthropic API)
-- **Vector Search:** Supabase pgvector
-- **Voice:** Web Speech API + Cloud Speech-to-Text
-- **Orchestration:** LangGraph
-- **Database:** Supabase (PostgreSQL)
-- **Deployment:** Cloudflare Pages
-- **Monitoring:** GitHub Actions
+| Component | Technology |
+|-----------|-----------|
+| Frontend | HTML/CSS/JS (Single-page) |
+| Chat UI | Split-screen responsive |
+| Voice | Web Speech API |
+| Backend | Cloudflare Workers |
+| AI | Claude Sonnet 4 (Anthropic API) |
+| Orchestration | LangGraph (Python) |
+| Database | Supabase |
+| Hosting | Cloudflare Pages |
 
-## Features
+## Deployment
 
-### Phase 1: Foundation ✅
-- [x] Natural language query parsing
-- [x] Split-screen UI
-- [x] Chat interface
-- [x] Agent activity display
-- [x] Supabase integration
+Automatically deploys to Cloudflare Pages on push to `main`:
 
-### Phase 2: Intelligence 🔄
-- [ ] Vector semantic search
-- [ ] Voice commands
-- [ ] Mobile responsive
-- [ ] Semantic caching (30-40% cost reduction)
-
-### Phase 3: Autonomous 📅
-- [ ] LangGraph orchestrator
-- [ ] Automated title research
-- [ ] Lien discovery
-- [ ] Investment scoring
-- [ ] Proactive recommendations
-
-## Performance Targets
-
-Based on industry benchmarks:
-- Query understanding: **85-90% accuracy**
-- Response time: **<500ms**
-- Voice accuracy: **95%** (tax deed terminology)
-- Cost per analysis: **~$2**
-- Engagement lift: **20-40%**
-- Time savings: **25-30%**
-
-## Quick Start
-
-```bash
-npm install
-npm run dev
+```yaml
+# .github/workflows/deploy.yml
+wrangler pages deploy public --project-name=biddeed-conversational-ai
 ```
 
 ## Environment Variables
 
-```env
-VITE_ANTHROPIC_API_KEY=sk-ant-...
-VITE_SUPABASE_URL=https://...
-VITE_SUPABASE_ANON_KEY=eyJ...
-VITE_GOOGLE_SPEECH_API_KEY=...
 ```
+ANTHROPIC_API_KEY=your_api_key
+SUPABASE_URL=https://mocerqjnksmhcjzxrewo.supabase.co
+SUPABASE_KEY=your_service_role_key
+```
+
+## Related Projects
+
+- [brevard-bidder-scraper](https://github.com/breverdbidder/brevard-bidder-scraper) - Main pipeline
+- [brevard-bidder-landing](https://github.com/breverdbidder/brevard-bidder-landing) - Landing page
+- [Foreclosure Map](https://brevard-bidder-landing.pages.dev/map) - Interactive map
+
+## License
+
+Proprietary - Everest Capital USA
 
 ---
 
-Built with ❤️ by BidDeed.AI | Powered by Claude & LangGraph
+**Built with BidDeed.AI V16.4.0** | Manus-inspired architecture
