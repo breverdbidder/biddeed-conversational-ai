@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BidDeed.AI - Foreclosure Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a24;--border:#2a2a3a;--text:#f0f0f5;--text2:#8888a0;--accent:#38bdf8;--purple:#a78bfa;--success:#22c55e;--warn:#eab308;--error:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+.header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:var(--bg2);border-bottom:1px solid var(--border);height:60px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.logo{display:flex;align-items:center;gap:.75rem}.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.logo-text{font-size:1.25rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{font-size:.65rem;padding:.2rem .5rem;background:rgba(56,189,248,.1);color:var(--accent);border-radius:4px;font-weight:600;margin-left:.5rem}
+.nav{display:flex;gap:1rem}.nav a{color:var(--text2);text-decoration:none;font-size:.875rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;transition:all .2s}.nav a:hover{color:var(--text);background:var(--bg3)}.nav a.active{color:var(--accent)}
+#map{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:1}
+.map-controls{position:fixed;top:80px;left:20px;z-index:1001;display:flex;flex-direction:column;gap:10px}
+.map-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.75rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:.5rem;transition:all .2s}
+.map-btn:hover{background:var(--bg3);border-color:var(--accent)}
+.map-btn.active{background:rgba(56,189,248,.1);border-color:var(--accent);color:var(--accent)}
+.stats-panel{position:fixed;bottom:20px;left:20px;right:20px;z-index:1001;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;display:flex;justify-content:space-around;gap:2rem}
+.stat{text-align:center}.stat-value{font-size:1.5rem;font-weight:700;color:var(--accent)}.stat-label{font-size:.75rem;color:var(--text2);margin-top:.25rem}
+.stat-value.bid{color:var(--success)}.stat-value.review{color:var(--warn)}.stat-value.skip{color:var(--error)}
+.popup-content{font-family:'Inter',sans-serif;min-width:250px}
+.popup-content h3{font-size:1rem;margin-bottom:.5rem;color:#1a1a24}
+.popup-content .address{color:#666;font-size:.85rem;margin-bottom:.75rem}
+.popup-content .details{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem}
+.popup-content .detail-item{display:flex;flex-direction:column}.popup-content .detail-label{color:#888;font-size:.7rem}.popup-content .detail-value{font-weight:600;color:#333}
+.popup-content .recommendation{margin-top:.75rem;padding:.5rem;border-radius:6px;text-align:center;font-weight:600;font-size:.85rem}
+.popup-content .recommendation.bid{background:#dcfce7;color:#166534}
+.popup-content .recommendation.review{background:#fef9c3;color:#854d0e}
+.popup-content .recommendation.skip{background:#fee2e2;color:#991b1b}
+.leaflet-popup-content-wrapper{border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+@media(max-width:768px){.stats-panel{flex-wrap:wrap;gap:1rem}.stat{flex:1;min-width:80px}.map-controls{top:70px;left:10px}.map-btn{padding:.5rem .75rem;font-size:.8rem}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="logo"><div class="logo-icon">🏠</div><span class="logo-text">BidDeed.AI</span><span class="badge">MAP</span></div>
+<nav class="nav"><a href="/map" class="active">Map</a><a href="/agent">Agent</a><a href="/chat">Chat</a></nav>
+</header>
+
+<div class="map-controls">
+<button class="map-btn active" onclick="filterMarkers('all')">📍 All Properties</button>
+<button class="map-btn" onclick="filterMarkers('BID')">✅ BID Only</button>
+<button class="map-btn" onclick="filterMarkers('REVIEW')">⚠️ REVIEW Only</button>
+<button class="map-btn" onclick="filterMarkers('SKIP')">❌ SKIP Only</button>
+</div>
+
+<div id="map"></div>
+
+<div class="stats-panel">
+<div class="stat"><div class="stat-value" id="total-count">0</div><div class="stat-label">Total Properties</div></div>
+<div class="stat"><div class="stat-value bid" id="bid-count">0</div><div class="stat-label">BID</div></div>
+<div class="stat"><div class="stat-value review" id="review-count">0</div><div class="stat-label">REVIEW</div></div>
+<div class="stat"><div class="stat-value skip" id="skip-count">0</div><div class="stat-label">SKIP</div></div>
+<div class="stat"><div class="stat-value" id="total-judgment">$0</div><div class="stat-label">Total Judgment</div></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Initialize map centered on Brevard County
+const map = L.map('map').setView([28.3922, -80.6077], 10);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO',
+  maxZoom: 19
+}).addTo(map);
+
+// Sample foreclosure data - replace with API call
+const properties = [
+  {id:1,lat:28.4167,lng:-80.6000,address:"123 Atlantic Ave, Melbourne Beach",judgment:285000,arv:420000,recommendation:"BID",caseNumber:"05-2024-CA-012345",plaintiff:"Wells Fargo"},
+  {id:2,lat:28.3200,lng:-80.6100,address:"456 Ocean Blvd, Indialantic",judgment:195000,arv:310000,recommendation:"REVIEW",caseNumber:"05-2024-CA-012346",plaintiff:"Bank of America"},
+  {id:3,lat:28.4800,lng:-80.5900,address:"789 Banana River Dr, Cocoa Beach",judgment:425000,arv:550000,recommendation:"BID",caseNumber:"05-2024-CA-012347",plaintiff:"Chase"},
+  {id:4,lat:28.2500,lng:-80.7200,address:"321 Palm Bay Rd, Palm Bay",judgment:145000,arv:180000,recommendation:"SKIP",caseNumber:"05-2024-CA-012348",plaintiff:"Nationstar"},
+  {id:5,lat:28.5400,lng:-80.8100,address:"654 Merritt Island Cswy, Merritt Island",judgment:310000,arv:475000,recommendation:"BID",caseNumber:"05-2024-CA-012349",plaintiff:"US Bank"},
+  {id:6,lat:28.3700,lng:-80.7400,address:"987 Wickham Rd, Melbourne",judgment:225000,arv:290000,recommendation:"REVIEW",caseNumber:"05-2024-CA-012350",plaintiff:"PHH Mortgage"},
+  {id:7,lat:28.6100,lng:-80.8300,address:"147 Garden St, Titusville",judgment:165000,arv:195000,recommendation:"SKIP",caseNumber:"05-2024-CA-012351",plaintiff:"Carrington"},
+  {id:8,lat:28.4300,lng:-80.7700,address:"258 Viera Blvd, Viera",judgment:385000,arv:525000,recommendation:"BID",caseNumber:"05-2024-CA-012352",plaintiff:"Mr. Cooper"},
+  {id:9,lat:28.3500,lng:-80.6800,address:"369 Eau Gallie Blvd, Melbourne",judgment:275000,arv:340000,recommendation:"REVIEW",caseNumber:"05-2024-CA-012353",plaintiff:"Caliber"},
+  {id:10,lat:28.2900,lng:-80.7500,address:"741 Malabar Rd, Malabar",judgment:198000,arv:230000,recommendation:"SKIP",caseNumber:"05-2024-CA-012354",plaintiff:"SPS"}
+];
+
+let markers = [];
+let currentFilter = 'all';
+
+function getMarkerColor(rec) {
+  switch(rec) {
+    case 'BID': return '#22c55e';
+    case 'REVIEW': return '#eab308';
+    case 'SKIP': return '#ef4444';
+    default: return '#38bdf8';
+  }
+}
+
+function createMarker(p) {
+  const color = getMarkerColor(p.recommendation);
+  const icon = L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="background:${color};width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:12px;">${p.recommendation === 'BID' ? '✓' : p.recommendation === 'REVIEW' ? '?' : '✗'}</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+  
+  const marker = L.marker([p.lat, p.lng], {icon}).addTo(map);
+  
+  const popupContent = `
+    <div class="popup-content">
+      <h3>Case: ${p.caseNumber}</h3>
+      <div class="address">${p.address}</div>
+      <div class="details">
+        <div class="detail-item"><span class="detail-label">Judgment</span><span class="detail-value">$${p.judgment.toLocaleString()}</span></div>
+        <div class="detail-item"><span class="detail-label">Est. ARV</span><span class="detail-value">$${p.arv.toLocaleString()}</span></div>
+        <div class="detail-item"><span class="detail-label">Plaintiff</span><span class="detail-value">${p.plaintiff}</span></div>
+        <div class="detail-item"><span class="detail-label">Bid/Jdg Ratio</span><span class="detail-value">${Math.round((p.arv * 0.7 - 35000) / p.judgment * 100)}%</span></div>
+      </div>
+      <div class="recommendation ${p.recommendation.toLowerCase()}">${p.recommendation}</div>
+    </div>
+  `;
+  
+  marker.bindPopup(popupContent);
+  marker.propertyData = p;
+  markers.push(marker);
+}
+
+function filterMarkers(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  markers.forEach(m => {
+    if (filter === 'all' || m.propertyData.recommendation === filter) {
+      m.addTo(map);
+    } else {
+      m.remove();
+    }
+  });
+}
+
+function updateStats() {
+  const total = properties.length;
+  const bid = properties.filter(p => p.recommendation === 'BID').length;
+  const review = properties.filter(p => p.recommendation === 'REVIEW').length;
+  const skip = properties.filter(p => p.recommendation === 'SKIP').length;
+  const judgment = properties.reduce((sum, p) => sum + p.judgment, 0);
+  
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('bid-count').textContent = bid;
+  document.getElementById('review-count').textContent = review;
+  document.getElementById('skip-count').textContent = skip;
+  document.getElementById('total-judgment').textContent = '$' + (judgment / 1000000).toFixed(2) + 'M';
+}
+
+// Initialize
+properties.forEach(createMarker);
+updateStats();
+</script>
+</body>
+</html>
