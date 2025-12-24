@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BidDeed.AI - Conversational Foreclosure Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a24;--border:#2a2a3a;--text:#f0f0f5;--text2:#8888a0;--accent:#38bdf8;--purple:#a78bfa;--success:#22c55e;--warn:#eab308;--error:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+.header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:var(--bg2);border-bottom:1px solid var(--border);height:60px}
+.logo{display:flex;align-items:center;gap:.75rem}.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.logo-text{font-size:1.25rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{font-size:.65rem;padding:.2rem .5rem;background:rgba(56,189,248,.1);color:var(--accent);border-radius:4px;font-weight:600}
+.nav{display:flex;gap:1rem}.nav a{color:var(--text2);text-decoration:none;font-size:.875rem;font-weight:500;padding:.5rem .75rem;border-radius:6px;transition:all .2s}.nav a:hover{color:var(--text);background:var(--bg3)}.nav a.active{color:var(--accent)}
+.main{display:flex;height:calc(100vh - 60px)}
+.chat-panel{width:50%;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.chat-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.chat-header-icon{width:32px;height:32px;background:rgba(56,189,248,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.chat-messages{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.message{max-width:85%;padding:1rem 1.25rem;border-radius:12px;line-height:1.6;font-size:.9rem}
+.message.user{align-self:flex-end;background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff}
+.message.assistant{align-self:flex-start;background:var(--bg3);border:1px solid var(--border)}
+.message h3{margin:0 0 .5rem;font-size:1rem}.message h4{margin:.75rem 0 .5rem;font-size:.9rem}
+.message table{width:100%;border-collapse:collapse;margin:.5rem 0}.message td{padding:.25rem .5rem;border-bottom:1px solid var(--border);font-size:.8rem}
+.thinking{display:flex;align-items:center;gap:.5rem;color:var(--text2);font-size:.85rem;padding:.75rem 1rem;background:var(--bg3);border-radius:12px;align-self:flex-start}
+.dots{display:flex;gap:4px}.dots span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.4s infinite}.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.quick-actions{display:flex;flex-wrap:wrap;gap:.5rem;padding:.75rem 1.5rem;border-top:1px solid var(--border);background:var(--bg)}
+.quick-btn{padding:.5rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:.8rem;cursor:pointer;transition:all .2s}.quick-btn:hover{border-color:var(--accent);color:var(--accent)}
+.input-area{padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--bg2)}
+.input-wrap{display:flex;gap:.75rem;align-items:flex-end}
+.input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:.875rem 1rem;color:var(--text);font-size:.9rem;font-family:inherit;resize:none;min-height:48px;max-height:150px;outline:none}.input:focus{border-color:var(--accent)}.input::placeholder{color:var(--text2)}
+.btn{width:48px;height:48px;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.send-btn{background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff}.send-btn:hover{transform:scale(1.05)}.send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.voice-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2)}.voice-btn:hover{border-color:var(--accent);color:var(--accent)}.voice-btn.active{background:var(--error);border-color:var(--error);color:#fff}
+.agent-panel{width:50%;display:flex;flex-direction:column;background:var(--bg2)}
+.agent-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.status{display:flex;align-items:center;gap:.5rem}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:statusPulse 2s infinite}.status-dot.working{background:var(--warn);animation:none}
+@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.tabs{display:flex;gap:.25rem}.tab{padding:.5rem 1rem;background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:.8rem;font-weight:500;border-radius:6px;transition:all .2s}.tab:hover{color:var(--text)}.tab.active{background:var(--bg3);color:var(--accent)}
+.workspace{flex:1;overflow-y:auto;padding:1rem}
+.activity{display:flex;flex-direction:column;gap:.75rem}
+.act-item{display:flex;gap:.75rem;padding:.75rem;background:var(--bg3);border-radius:8px;border-left:3px solid var(--border);font-size:.85rem}
+.act-item.search{border-left-color:var(--accent)}.act-item.analysis{border-left-color:var(--purple)}.act-item.result{border-left-color:var(--success)}
+.act-icon{width:28px;height:28px;background:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.act-title{font-weight:500;margin-bottom:.25rem}.act-detail{color:var(--text2);font-size:.8rem}.act-time{color:var(--text2);font-size:.7rem;margin-top:.25rem}
+.prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.prop-card{background:var(--bg3);border-radius:12px;overflow:hidden;border:1px solid var(--border);transition:all .2s}.prop-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.prop-header{padding:1rem;border-bottom:1px solid var(--border)}.prop-addr{font-weight:600;font-size:.9rem;margin-bottom:.25rem}.prop-case{color:var(--text2);font-size:.75rem}
+.prop-body{padding:1rem}.prop-stats{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.prop-stat{text-align:center}.prop-val{font-weight:700;font-size:1.1rem;color:var(--accent)}.prop-lbl{font-size:.7rem;color:var(--text2);margin-top:.25rem}
+.prop-rec{display:inline-block;padding:.35rem .75rem;border-radius:20px;font-size:.75rem;font-weight:600;margin-top:.75rem}
+.prop-rec.bid{background:rgba(34,197,94,.2);color:var(--success)}.prop-rec.review{background:rgba(234,179,8,.2);color:var(--warn)}.prop-rec.skip{background:rgba(239,68,68,.2);color:var(--error)}
+.terminal{background:#0d1117;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.8rem;overflow:hidden}
+.term-header{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:#161b22;border-bottom:1px solid #30363d}
+.term-dot{width:12px;height:12px;border-radius:50%}.term-dot.r{background:#ff5f56}.term-dot.y{background:#ffbd2e}.term-dot.g{background:#27c93f}
+.term-title{margin-left:.5rem;color:#8b949e;font-size:.75rem}
+.term-body{padding:1rem;max-height:400px;overflow-y:auto}.term-line{color:#c9d1d9;margin-bottom:.25rem}.prompt{color:var(--success)}.cmd{color:var(--accent)}.output{color:#8b949e}
+@media(max-width:1024px){.main{flex-direction:column}.chat-panel,.agent-panel{width:100%;height:50%}.chat-panel{border-right:none;border-bottom:1px solid var(--border)}}
+@media(max-width:640px){.header{padding:.5rem 1rem}.nav{display:none}.input-area{padding:.75rem 1rem}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="logo"><div class="logo-icon">B</div><span class="logo-text">BidDeed.AI</span><span class="badge">AGENT</span></div>
+<nav class="nav"><a href="/map">Map</a><a href="/" class="active">Agent</a><a href="https://brevard-bidder-landing.pages.dev">Home</a></nav>
+</header>
+<div class="main">
+<div class="chat-panel">
+<div class="chat-header"><div class="chat-header-icon">💬</div><div><div style="font-weight:600">Foreclosure Research Agent</div><div style="font-size:.75rem;color:var(--text2)">Ask anything about Brevard foreclosures</div></div></div>
+<div class="chat-messages" id="msgs">
+<div class="message assistant"><strong>👋 Welcome to BidDeed.AI Agent!</strong><br><br>I'm your autonomous foreclosure research assistant. I can help you with:<br><br>• 🔍 <strong>Property Research</strong> - Search by address, case #, or criteria<br>• 📊 <strong>Investment Analysis</strong> - Calculate max bids, ROI, recommendations<br>• 🏠 <strong>Lien Discovery</strong> - Check senior mortgages, HOA liens, tax certs<br>• 📅 <strong>Auction Updates</strong> - Latest dates and property lists<br><br><em>Try: "Show me BID recommendations" or "Analyze 923 Slocum St"</em></div>
+</div>
+<div class="quick-actions">
+<button class="quick-btn" onclick="ask('Show BID recommendations for next auction')">🟢 BID Properties</button>
+<button class="quick-btn" onclick="ask('What properties should I avoid?')">🔴 Skip List</button>
+<button class="quick-btn" onclick="ask('When is the next foreclosure auction?')">📅 Next Auction</button>
+<button class="quick-btn" onclick="ask('Analyze the best investment opportunities')">💰 Top Opportunities</button>
+</div>
+<div class="input-area"><div class="input-wrap">
+<button class="btn voice-btn" id="voice" onclick="toggleVoice()">🎤</button>
+<textarea class="input" id="input" placeholder="Ask about foreclosures..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+<button class="btn send-btn" id="sendbtn" onclick="send()">➤</button>
+</div></div>
+</div>
+<div class="agent-panel">
+<div class="agent-header">
+<div class="status"><span class="status-dot" id="dot"></span><span id="status">Agent Ready</span></div>
+<div class="tabs"><button class="tab active" onclick="tab('activity')" id="t-activity">Activity</button><button class="tab" onclick="tab('results')" id="t-results">Results</button><button class="tab" onclick="tab('terminal')" id="t-terminal">Terminal</button></div>
+</div>
+<div class="workspace" id="workspace">
+<div id="p-activity" class="activity">
+<div class="act-item"><div class="act-icon">🚀</div><div><div class="act-title">Agent Initialized</div><div class="act-detail">Connected to BidDeed.AI pipeline</div><div class="act-time">Just now</div></div></div>
+<div class="act-item"><div class="act-icon">📊</div><div><div class="act-title">Data Loaded</div><div class="act-detail">22 properties from Dec 3, Dec 17, Jan 7 auctions</div><div class="act-time">Just now</div></div></div>
+</div>
+<div id="p-results" class="prop-grid" style="display:none"></div>
+<div id="p-terminal" style="display:none">
+<div class="terminal"><div class="term-header"><span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span><span class="term-title">BidDeed Agent Pipeline</span></div>
+<div class="term-body" id="term"><div class="term-line"><span class="prompt">$</span> <span class="cmd">biddeed-agent init</span></div><div class="term-line"><span class="output">✓ Connected to Supabase</span></div><div class="term-line"><span class="output">✓ Loaded 22 foreclosure properties</span></div><div class="term-line"><span class="output">✓ ML models ready (64.4% accuracy)</span></div><div class="term-line"><span class="prompt">$</span> <span class="cmd">awaiting commands...</span></div></div></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const DATA=[
+{c:"05-2024-CA-029012",a:"2450 PALM BAY RD NE, PALM BAY",j:185000,m:147000,r:"BID",s:.99,d:"2025-12-03",p:"Freedom Mortgage"},
+{c:"05-2024-CA-014947",a:"808 EMERSON DR, PALM BAY",j:219655,m:175724,r:"BID",s:.81,d:"2025-12-17",p:"LAKEVIEW LOAN"},
+{c:"05-2024-CA-048653",a:"775 JACARANDA ST, MERRITT ISLAND",j:110864,m:88691,r:"BID",s:.78,d:"2025-12-17",p:"DATA MORTGAGE"},
+{c:"05-2025-CA-013384",a:"2551 STRATFORD DR, COCOA",j:166431,m:133145,r:"BID",s:.82,d:"2025-12-17",p:"HUNTINGTON"},
+{c:"05-2025-CA-022257",a:"923 SLOCUM ST, PALM BAY",j:143880,m:115104,r:"BID",s:.79,d:"2025-12-17",p:"US BANK"},
+{c:"05-2025-CA-026675",a:"4461 LONGBOW DR, TITUSVILLE",j:224779,m:179823,r:"BID",s:.83,d:"2025-12-17",p:"NEWREZ"},
+{c:"05-2025-CA-034578",a:"520 HOLMES AVE, PALM BAY",j:268305,m:214644,r:"BID",s:.76,d:"2025-12-17",p:"UNITED WHOLESALE"},
+{c:"05-2024-CA-045234",a:"925 ATLANTUS TER, SATELLITE BEACH",j:425000,m:340000,r:"BID",s:.85,d:"2025-01-07",p:"NATIONSTAR"},
+{c:"05-2024-CA-045567",a:"4521 N ATLANTIC AVE, COCOA BEACH",j:520000,m:416000,r:"BID",s:.82,d:"2025-01-07",p:"JPMORGAN CHASE"},
+{c:"05-2024-CA-045789",a:"987 VIERA BLVD, VIERA",j:485000,m:388000,r:"BID",s:.85,d:"2025-01-07",p:"LOANCARE LLC"},
+{c:"05-2022-CA-035649",a:"5600 GRAHAM ST, COCOA",j:279230,m:161612,r:"REVIEW",s:.45,d:"2025-12-03",p:"US Bank NA"},
+{c:"05-2024-CA-018884",a:"906 SHAW CIR, MELBOURNE",j:372130,m:186065,r:"REVIEW",s:.45,d:"2025-12-03",p:"Lakeview Loan"},
+{c:"05-2018-CA-050709",a:"4920 BROOKHAVEN ST, COCOA",j:74346,m:52042,r:"REVIEW",s:.65,d:"2025-12-17",p:"MTGLQ INVEST"},
+{c:"05-2023-CA-044476",a:"2100 LEEWOOD BLVD, MELBOURNE",j:232556,m:162789,r:"REVIEW",s:.72,d:"2025-12-17",p:"NATIONSTAR"},
+{c:"05-2024-CA-051335",a:"1001 ORIOLE CIR, BAREFOOT BAY",j:325000,m:227500,r:"REVIEW",s:.55,d:"2025-12-17",p:"EVELYN SIMEON"},
+{c:"05-2025-CA-017191",a:"3625 MIRIAM DR, TITUSVILLE",j:334505,m:234153,r:"REVIEW",s:.68,d:"2025-12-17",p:"CITIZENS BANK"},
+{c:"05-2025-CA-024879",a:"661 BRISBANE ST, PALM BAY",j:281528,m:197070,r:"REVIEW",s:.71,d:"2025-12-17",p:"DATA MORT"},
+{c:"05-2024-CA-045123",a:"1847 DOOLITTLE LN, TITUSVILLE",j:287500,m:201250,r:"REVIEW",s:.68,d:"2025-01-07",p:"WELLS FARGO"},
+{c:"05-2024-CA-024562",a:"8520 HIGHWAY 1, MICCO",j:25550,m:16250,r:"SKIP",s:.003,d:"2025-12-03",p:"Bank of NY Mellon"},
+{c:"05-2024-CA-031234",a:"2085 ROBIN HOOD DR, MELBOURNE",j:176240,m:88120,r:"SKIP",s:.003,d:"2025-12-03",p:"Bank of America"},
+{c:"05-2024-CA-031697",a:"1160 TIGER ST SE, PALM BAY",j:253150,m:126575,r:"SKIP",s:.003,d:"2025-12-03",p:"Nationstar"},
+{c:"05-2025-CC-017102",a:"1404 PARADISE LN, COCOA",j:24520,m:17164,r:"SKIP",s:.42,d:"2025-12-17",p:"NORTHFIELD"}
+];
+let busy=false,voiceOn=false,recog=null;
+function parse(q){const l=q.toLowerCase();let intent={type:null,f:{}};
+if(l.includes('bid')&&(l.includes('recommend')||l.includes('show')||l.includes('list'))){intent.type='filter';intent.f.r='BID'}
+else if(l.includes('skip')||l.includes('avoid')){intent.type='filter';intent.f.r='SKIP'}
+else if(l.includes('review')){intent.type='filter';intent.f.r='REVIEW'}
+else if(l.includes('next auction')||l.includes('upcoming')){intent.type='auction'}
+else if(l.includes('best')||l.includes('opportunit')){intent.type='best'}
+else if(l.includes('analyz')||q.match(/\d{3,4}\s+\w+/)){intent.type='search';intent.f.kw=q.split(' ').filter(w=>w.length>3)}
+else{intent.type='general'}
+if(l.includes('jan'))intent.f.d='2025-01-07';if(l.includes('dec 17'))intent.f.d='2025-12-17';if(l.includes('dec 3'))intent.f.d='2025-12-03';
+return intent}
+async function process(q){const i=parse(q);let res=[...DATA],resp='';
+act('search','Parsing Query',`Intent: ${i.type}`,'🔍');await sleep(300);
+switch(i.type){
+case 'filter':res=DATA.filter(p=>p.r===i.f.r);if(i.f.d)res=res.filter(p=>p.d===i.f.d);
+act('analysis','Filtering Properties',`Found ${res.length} ${i.f.r} properties`,'📊');await sleep(500);
+if(res.length>0){const tot=res.reduce((s,p)=>s+p.j,0);resp=`## 🏠 ${i.f.r} Properties (${res.length})\n\n**Total Judgment:** $${(tot/1e6).toFixed(2)}M\n\n`;
+res.slice(0,5).forEach(p=>{const e=p.r==='BID'?'🟢':p.r==='REVIEW'?'🟡':'🔴';resp+=`${e} **${p.a}**\nJudgment: $${p.j.toLocaleString()} | Max Bid: $${p.m.toLocaleString()} | ML: ${(p.s*100).toFixed(0)}%\n\n`});
+if(res.length>5)resp+=`_...and ${res.length-5} more in Results tab._`;showRes(res)}else resp=`No ${i.f.r} properties found.`;break;
+case 'auction':const jan=DATA.filter(p=>p.d==='2025-01-07');act('search','Checking Calendar','Next: Jan 7, 2025','📅');await sleep(400);
+resp=`## 📅 Next Foreclosure Auction\n\n**Date:** Tuesday, January 7, 2025\n**Time:** 11:00 AM EST\n**Location:** Titusville Courthouse\n**Type:** In-Person\n\n### Properties (${jan.length})\n🟢 BID: ${jan.filter(p=>p.r==='BID').length}\n🟡 REVIEW: ${jan.filter(p=>p.r==='REVIEW').length}\n🔴 SKIP: ${jan.filter(p=>p.r==='SKIP').length}\n\n**Total Judgment:** $${(jan.reduce((s,p)=>s+p.j,0)/1e6).toFixed(2)}M`;showRes(jan);break;
+case 'best':res=DATA.filter(p=>p.r==='BID'&&p.s>.75).sort((a,b)=>b.s-a.s);act('analysis','Running ML Analysis',`Scoring ${DATA.length} properties`,'🤖');await sleep(600);act('result','Found Opportunities',`${res.length} high-confidence`,'✅');
+resp=`## 💰 Top Investment Opportunities\n\nBased on ML model (64.4% accuracy):\n\n`;res.slice(0,5).forEach((p,n)=>{resp+=`**${n+1}. ${p.a}**\n📊 ML: ${(p.s*100).toFixed(0)}% | Judgment: $${p.j.toLocaleString()}\n💵 Max Bid: $${p.m.toLocaleString()} | Auction: ${p.d}\n\n`});showRes(res);break;
+case 'search':const kw=i.f.kw||[];res=DATA.filter(p=>kw.some(k=>p.a.toLowerCase().includes(k.toLowerCase())||p.c.toLowerCase().includes(k.toLowerCase())));act('search','Searching',`Keywords: ${kw.join(', ')}`,'🔍');await sleep(400);
+if(res.length>0){const p=res[0];act('result','Found',p.a,'🏠');
+resp=`## 🏠 ${p.a}\n\n| Field | Value |\n|---|---|\n| Case # | ${p.c} |\n| Judgment | $${p.j.toLocaleString()} |\n| Max Bid | $${p.m.toLocaleString()} |\n| ML Score | ${(p.s*100).toFixed(0)}% |\n| Plaintiff | ${p.p} |\n| Auction | ${p.d} |\n| Rec | **${p.r}** |\n\n### Analysis\n- Bid/Judgment: ${((p.m/p.j)*100).toFixed(0)}%\n- Potential Equity: $${(p.j-p.m).toLocaleString()}\n`;
+if(p.r==='BID')resp+='- ✅ Strong investment opportunity';else if(p.r==='REVIEW')resp+='- ⚠️ Needs due diligence';else resp+='- ❌ Not recommended';showRes(res)}else resp=`No properties found for "${kw.join(' ')}".`;break;
+default:resp=`Try:\n• "Show BID recommendations"\n• "Next auction date"\n• "Analyze [address]"\n• "Best opportunities"\n• "Properties to skip"`}
+act('result','Done',`${resp.length} chars`,'✅');return resp}
+function addMsg(c,t){const d=document.getElementById('msgs'),m=document.createElement('div');m.className=`message ${t}`;m.innerHTML=fmt(c);d.appendChild(m);d.scrollTop=d.scrollHeight}
+function fmt(t){return t.replace(/## (.*)/g,'<h3>$1</h3>').replace(/### (.*)/g,'<h4>$1</h4>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>').replace(/\|(.+)\|/g,m=>{const c=m.split('|').filter(x=>x.trim());return '<tr>'+c.map(x=>`<td>${x.trim()}</td>`).join('')+'</tr>'})}
+function act(type,title,detail,icon='📋'){const log=document.getElementById('p-activity'),it=document.createElement('div');it.className=`act-item ${type}`;it.innerHTML=`<div class="act-icon">${icon}</div><div><div class="act-title">${title}</div><div class="act-detail">${detail}</div><div class="act-time">Just now</div></div>`;log.insertBefore(it,log.firstChild)}
+function termLine(l){const t=document.getElementById('term'),d=document.createElement('div');d.className='term-line';d.innerHTML=l;t.appendChild(d);t.scrollTop=t.scrollHeight}
+function showRes(props){const g=document.getElementById('p-results');g.innerHTML='';props.forEach(p=>{const c=document.createElement('div');c.className='prop-card';c.innerHTML=`<div class="prop-header"><div class="prop-addr">${p.a}</div><div class="prop-case">${p.c}</div></div><div class="prop-body"><div class="prop-stats"><div class="prop-stat"><div class="prop-val">$${(p.j/1000).toFixed(0)}K</div><div class="prop-lbl">Judgment</div></div><div class="prop-stat"><div class="prop-val">$${(p.m/1000).toFixed(0)}K</div><div class="prop-lbl">Max Bid</div></div><div class="prop-stat"><div class="prop-val">${(p.s*100).toFixed(0)}%</div><div class="prop-lbl">ML Score</div></div><div class="prop-stat"><div class="prop-val">${p.d.slice(5)}</div><div class="prop-lbl">Auction</div></div></div><span class="prop-rec ${p.r.toLowerCase()}">${p.r}</span></div>`;g.appendChild(c)});tab('results')}
+function tab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(`t-${n}`).classList.add('active');['activity','results','terminal'].forEach(x=>document.getElementById(`p-${x}`).style.display=x===n?(x==='results'?'grid':'block'):'none')}
+function setStatus(t,w=false){document.getElementById('status').textContent=t;document.getElementById('dot').className=`status-dot ${w?'working':''}`}
+async function send(){const inp=document.getElementById('input'),q=inp.value.trim();if(!q||busy)return;inp.value='';addMsg(q,'user');busy=true;setStatus('Processing...',true);document.getElementById('sendbtn').disabled=true;
+const th=document.createElement('div');th.className='thinking';th.innerHTML='<div class="dots"><span></span><span></span><span></span></div> Agent thinking...';document.getElementById('msgs').appendChild(th);
+termLine(`<span class="prompt">$</span> <span class="cmd">process "${q.slice(0,30)}..."</span>`);
+try{const r=await process(q);th.remove();addMsg(r,'assistant');termLine(`<span class="output">✓ Done (${r.length} chars)</span>`)}catch(e){th.remove();addMsg('Error processing request.','assistant');termLine(`<span class="output" style="color:#ef4444">✗ ${e.message}</span>`)}
+busy=false;setStatus('Agent Ready');document.getElementById('sendbtn').disabled=false}
+function ask(t){document.getElementById('input').value=t;send()}
+function toggleVoice(){const b=document.getElementById('voice');if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){alert('Voice not supported. Try Chrome.');return}
+if(voiceOn){recog.stop();b.classList.remove('active');voiceOn=false;return}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recog=new SR();recog.continuous=false;recog.interimResults=false;
+recog.onstart=()=>{b.classList.add('active');voiceOn=true;act('search','Voice Active','Listening...','🎤')};
+recog.onresult=e=>{const t=e.results[0][0].transcript;document.getElementById('input').value=t;act('result','Transcribed',t.slice(0,50)+'...','✅');send()};
+recog.onerror=()=>{b.classList.remove('active');voiceOn=false};recog.onend=()=>{b.classList.remove('active');voiceOn=false};recog.start()}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+document.getElementById('input').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,150)+'px'});
+</script>
+</body>
+</html>
