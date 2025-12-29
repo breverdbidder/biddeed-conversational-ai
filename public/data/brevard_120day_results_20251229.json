@@ -1,0 +1,1787 @@
+{
+  "scraped_at": "2025-12-29T11:24:32.328287",
+  "county": "Brevard",
+  "fips": "12009",
+  "date_range": {
+    "start": "2025-08-31",
+    "end": "2025-12-29",
+    "days": 120
+  },
+  "summary": {
+    "total_dates": 16,
+    "total_properties": 150,
+    "total_volume": 161987190,
+    "foreclosures": {
+      "count": 67,
+      "volume": 160186200
+    },
+    "tax_deeds": {
+      "count": 83,
+      "volume": 1800990
+    }
+  },
+  "by_date": {
+    "2025-12-18": {
+      "count": 8,
+      "volume": 268200,
+      "type": "TAX DEED",
+      "properties": [
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3625-kj-1372-12",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 30100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3505-01-25-2",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 3100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "800 N Fiske Blvd Apt 503",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 25100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1882 Red Bud Cir Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 45400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1096 Siboney St Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 37000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "3701 Erie St",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 65000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "3180 Santa Cruz Ave Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 37500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "2600 Race St",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 25000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-12-17": {
+      "count": 4,
+      "volume": 923500,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-12-17",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2100 Leewood Blvd",
+          "city": "MELBOURNE",
+          "zip": "32935",
+          "sold_amount": 138100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-17",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3700 Miriam Dr",
+          "city": "TITUSVILLE",
+          "zip": "32796",
+          "sold_amount": 275000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-17",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "520 Holmes Ave Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 235400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-17",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3060 Halsey Ave Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 275000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-12-10": {
+      "count": 2,
+      "volume": 441500,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-12-10",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "150 Delia Ave Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 256500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-10",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1561 Sandusky St Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 185000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-12-03": {
+      "count": 7,
+      "volume": 28738300,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3298 Jackson Ave Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 100100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "906 Shaw Cir",
+          "city": "MELBOURNE",
+          "zip": "32940",
+          "sold_amount": 260100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "4805 Citrus Blvd",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 27750000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2536 Friday Rd",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 225000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "180 Lee Rd",
+          "city": "MELBOURNE",
+          "zip": "32904",
+          "sold_amount": 103000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "220 Stephenson Dr",
+          "city": "MELBOURNE",
+          "zip": "32904",
+          "sold_amount": 120000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-12-03",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2116 Spring Creek Cir Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 180100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-11-19": {
+      "count": 11,
+      "volume": 1451800,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "330 Melbourne Ave",
+          "city": "Merrit Island",
+          "zip": "32953",
+          "sold_amount": 100100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "514 N Carolina Ave",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 120100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3117 Manor Dr Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 100100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "310 Nidy Ave",
+          "city": "TITUSVILLE",
+          "zip": "32796",
+          "sold_amount": 101000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "Land 30 3707-mf-a-118",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 163100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3934 Burkholm Rd",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 203100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "Land 30 3707-mf-a-152",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 102000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "917 Glenmore Cir",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 170100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1515 Huntington Ln Apt 814",
+          "city": "ROCKLEDGE",
+          "zip": "32955",
+          "sold_amount": 22000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1160 Redwood Rd",
+          "city": "Merrit Island",
+          "zip": "32952",
+          "sold_amount": 200100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-19",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1119 Macon Dr",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 170100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-11-05": {
+      "count": 8,
+      "volume": 71175300,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "3481 Areca Palm Ave",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 19400000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "340 Schoolhouse Ln",
+          "city": "Merrit Island",
+          "zip": "32953",
+          "sold_amount": 8010000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1467 Barefoot Cir",
+          "city": "sebastian",
+          "zip": "32976",
+          "sold_amount": 90200,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1973 Mango St Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 5700000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1383 Eldron Blvd Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 13010000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6235 N Tropical Trl",
+          "city": "Merrit Island",
+          "zip": "32953",
+          "sold_amount": 14100000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1600 Woodland Dr Apt 8211",
+          "city": "ROCKLEDGE",
+          "zip": "32955",
+          "sold_amount": 10600000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-11-05",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "488 Coyote Dr",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 265100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-29": {
+      "count": 5,
+      "volume": 745300,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-10-29",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1260 Amherst Ct",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 131100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-29",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1372 Whaling Ave Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 177000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-29",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6563 Emil Ave",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 166000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-29",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "108 1st St",
+          "city": "Merrit Island",
+          "zip": "32953",
+          "sold_amount": 200200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-29",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "909 Almond Blvd",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 71000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-22": {
+      "count": 8,
+      "volume": 769400,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1610 Holland St",
+          "city": "MELBOURNE",
+          "zip": "32935",
+          "sold_amount": 125100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "644 Wedelia Dr",
+          "city": "sebastian",
+          "zip": "32976",
+          "sold_amount": 66100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "204 Adams Ave Apt 10",
+          "city": "CAPE CANAVERAL",
+          "zip": "32920",
+          "sold_amount": 65400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "278 Greenway Ave Ne",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 124100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2514 Date Dr",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 95100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1045 Alamanda Ln",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 11000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2605 New York St",
+          "city": "MELBOURNE",
+          "zip": "32904",
+          "sold_amount": 51100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-22",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6555 Corsica Blvd",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 231500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-16": {
+      "count": 28,
+      "volume": 1101873,
+      "type": "TAX DEED",
+      "properties": [
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3520-01-10-4",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 10100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3831-00-318",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 8700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3505-01-25-2",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 3100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "511 Kennwood Ave",
+          "city": "Merrit Island",
+          "zip": "32952",
+          "sold_amount": 100300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1403 Paradise Ln",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 44600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "256 Treu Ter Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 180200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "618 S Varr Ave",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 74100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1250 Joy Ct Ne",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 22100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1925 Sago Palm St Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 65800,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1187 Barefoot Cir",
+          "city": "sebastian",
+          "zip": "32976",
+          "sold_amount": 79600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "441 Sand Dollar Ln",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 17300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "212 Cleveland Way",
+          "city": "ROCKLEDGE",
+          "zip": "32955",
+          "sold_amount": 19900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "6050 Alden Ave",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 159800,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1909 Unknown",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 12900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "322 Broadway Blvd",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 17900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "5377 Beck Dr",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 89100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1991 Palomino Dr",
+          "city": "TITUSVILLE",
+          "zip": "32796",
+          "sold_amount": 30100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 30 3806-00-58",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 7100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1240 S Deleon Ave",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 42500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "906 Westview Dr",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 20600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1011 Clearmont St Ne # 201-3",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 3200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3535-01-20-11",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 3400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1011 Clearmont St Ne # 206-3",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 2673,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3529-01-24-10",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 9600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "671 Spoonbill St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 19500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3501-25-1-4",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 9800,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3501-25-1-3",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 10500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-16",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "942 Tacaro Ave Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 37400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-15": {
+      "count": 6,
+      "volume": 796700,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1520 Lucky St Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 132000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2540 Fairfield Dr",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 200100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1325 Wadsworth St Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 144900,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1560 Seneca Dr",
+          "city": "MELBOURNE",
+          "zip": "32935",
+          "sold_amount": 20100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1106 Wild Rose Dr Ne",
+          "city": "PALM BAY",
+          "zip": "32905",
+          "sold_amount": 120500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-15",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "731 Delano Ave Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 179100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-08": {
+      "count": 1,
+      "volume": 134000,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-10-08",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2417 Dakota Dr",
+          "city": "MELBOURNE",
+          "zip": "32935",
+          "sold_amount": 134000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-10-01": {
+      "count": 7,
+      "volume": 17439100,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1706 University Ln Apt 603",
+          "city": "COCOA",
+          "zip": "32922",
+          "sold_amount": 50500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1804 Ponderosa Ln",
+          "city": "TITUSVILLE",
+          "zip": "32796",
+          "sold_amount": 200000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "256 Roman Ave Ne",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 110100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "656 Banks St Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 16510000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2814 Lorna Dr",
+          "city": "MELBOURNE",
+          "zip": "32935",
+          "sold_amount": 150000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "726 Mason Dr",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 218500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-10-01",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6020 Chapman St",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 200000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-09-24": {
+      "count": 4,
+      "volume": 566200,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-09-24",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6900 N Highway 1 Apt 6303",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 121000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-24",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "6525 June Dr",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 165000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-24",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "215 Hagerstown St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 140100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-24",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "575 Troy Rd Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 140100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-09-18": {
+      "count": 47,
+      "volume": 430917,
+      "type": "TAX DEED",
+      "properties": [
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1072 Lamplighter Dr Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 44400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "251 Decordre Rd Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 42900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "165 Angelo Rd Se",
+          "city": "PALM BAY",
+          "zip": "32909",
+          "sold_amount": 43600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3505-01-25-2",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 2900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3441-01-2.g-41.02",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 5400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1568 Leesburg St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 7200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1513 Petunia St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 6500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3627-kv-2972-1",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 6100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3423-ai-1-3.01",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 2100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3610-00-779",
+          "city": "Merrit Island",
+          "zip": "32953",
+          "sold_amount": 6700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3525-00-332",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 1600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 22 3528-01-44-12",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 1200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 30 3806-00-854",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 11000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3441-01-2.g-44.03",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 3600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3441-01-3.g-18.01",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 7300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3529-01-2-5",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 12000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3520-01-10-4",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 5000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3831-00-867",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 5400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3437-10-98-5",
+          "city": "Scottsmoor",
+          "zip": "32754",
+          "sold_amount": 5000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3441-01-3.g-1.07",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 2300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "1367 Magdad St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 11100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3535-00-528",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 2100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 28 3703-01-44-10.01",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 1517,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3441-01-3.g-18.02",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 8100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3722-00-86",
+          "city": "Grant-Valkaria",
+          "zip": "32909",
+          "sold_amount": 6900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3423-ai-1-3.04",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 2500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3712-00-800",
+          "city": "Malabar",
+          "zip": "32950",
+          "sold_amount": 1700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3402-ai-7-4.08",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 1300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3726-26-11-1",
+          "city": "Grant-Valkaria",
+          "zip": "32950",
+          "sold_amount": 6200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3437-02-16-7",
+          "city": "Scottsmoor",
+          "zip": "32754",
+          "sold_amount": 6700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 21 3517-01--6.02",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 8100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3403-ai-8-1.23",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 2900,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3727-00-318",
+          "city": "Grant-Valkaria",
+          "zip": "32909",
+          "sold_amount": 4000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3831-00-318",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 12500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 29 3831-00-290",
+          "city": "Grant-Valkaria",
+          "zip": "32949",
+          "sold_amount": 5200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3528-01-13-21",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 4400,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3528-01-13-4",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 6800,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3403-ai-5-6.04",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 1300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 20g3403-ai-8-2.22",
+          "city": "MIMS",
+          "zip": "32754",
+          "sold_amount": 2600,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "986 Keswick St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 8800,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "990 Keswick St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 8700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "187 Lamar St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 29700,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 23 3528-01-10-9",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 6500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "187 Franzing St Sw",
+          "city": "PALM BAY",
+          "zip": "32908",
+          "sold_amount": 29300,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3517-01-6-22",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 5500,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "238 Lime St",
+          "city": "COCOA",
+          "zip": "32926",
+          "sold_amount": 16200,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-18",
+          "day": "Thursday",
+          "type": "TAX DEED",
+          "address": "Land 24 3517-01-7-11",
+          "city": "west canal groves",
+          "zip": "32926",
+          "sold_amount": 8100,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-09-17": {
+      "count": 1,
+      "volume": 30100,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-09-17",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "900 S Park Ave",
+          "city": "TITUSVILLE",
+          "zip": "32780",
+          "sold_amount": 30100,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    },
+    "2025-09-10": {
+      "count": 3,
+      "volume": 36975000,
+      "type": "FORECLOSURE",
+      "properties": [
+        {
+          "date": "2025-09-10",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "1098 Jupiter Blvd Nw",
+          "city": "PALM BAY",
+          "zip": "32907",
+          "sold_amount": 165000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-10",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "2319 Ruffner Rd",
+          "city": "MELBOURNE",
+          "zip": "32901",
+          "sold_amount": 19800000,
+          "winner_type": "3rd Party",
+          "case_number": ""
+        },
+        {
+          "date": "2025-09-10",
+          "day": "Wednesday",
+          "type": "FORECLOSURE",
+          "address": "7170 Whitney Ave",
+          "city": "COCOA",
+          "zip": "32927",
+          "sold_amount": 17010000,
+          "winner_type": "Plaintiff",
+          "case_number": ""
+        }
+      ]
+    }
+  }
+}
