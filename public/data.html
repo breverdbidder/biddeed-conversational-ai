@@ -49,6 +49,12 @@
             background: rgba(99, 102, 241, 0.1);
             color: #e2e8f0;
         }
+        .property-row {
+            transition: all 0.2s;
+        }
+        .property-row:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -73,7 +79,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
         const { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
 
         const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
@@ -81,9 +87,9 @@
         function DataDashboard() {
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
+            const [filter, setFilter] = useState({ type: 'ALL', minAmount: 0 });
 
             useEffect(() => {
-                // Fetch from same domain - works with Cloudflare Pages
                 fetch('/data/brevard_120day_results_20251229.json')
                     .then(res => res.json())
                     .then(data => {
@@ -97,12 +103,74 @@
                     });
             }, []);
 
+            const chartData = useMemo(() => {
+                if (!data) return [];
+                
+                return Object.keys(data.by_date)
+                    .sort()
+                    .map(date => ({
+                        date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                        volume: data.by_date[date].volume / 1000000,
+                        count: data.by_date[date].count,
+                        type: data.by_date[date].type
+                    }));
+            }, [data]);
+
+            const typeBreakdown = useMemo(() => {
+                if (!data) return [];
+                return [
+                    { name: 'Foreclosures', value: data.summary.foreclosures.count, volume: data.summary.foreclosures.volume },
+                    { name: 'Tax Deeds', value: data.summary.tax_deeds.count, volume: data.summary.tax_deeds.volume }
+                ];
+            }, [data]);
+
+            const topProperties = useMemo(() => {
+                if (!data) return [];
+                
+                const allProps = [];
+                Object.keys(data.by_date).forEach(date => {
+                    data.by_date[date].properties.forEach(prop => {
+                        allProps.push({ ...prop, date });
+                    });
+                });
+
+                return allProps
+                    .filter(p => p.sold_amount >= filter.minAmount)
+                    .filter(p => filter.type === 'ALL' || p.type === filter.type)
+                    .sort((a, b) => b.sold_amount - a.sold_amount)
+                    .slice(0, 20);
+            }, [data, filter]);
+
+            const cityStats = useMemo(() => {
+                if (!data) return [];
+                
+                const cities = {};
+                Object.keys(data.by_date).forEach(date => {
+                    data.by_date[date].properties.forEach(prop => {
+                        if (!cities[prop.city]) {
+                            cities[prop.city] = { count: 0, volume: 0 };
+                        }
+                        cities[prop.city].count++;
+                        cities[prop.city].volume += prop.sold_amount;
+                    });
+                });
+
+                return Object.keys(cities)
+                    .map(city => ({
+                        city,
+                        count: cities[city].count,
+                        volume: cities[city].volume
+                    }))
+                    .sort((a, b) => b.volume - a.volume)
+                    .slice(0, 10);
+            }, [data]);
+
             if (loading) {
                 return (
                     <div className="flex items-center justify-center min-h-screen">
                         <div className="text-center">
                             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-                            <p className="text-slate-400">Loading 120 days of auction data...</p>
+                            <p className="text-slate-400">Loading auction data...</p>
                         </div>
                     </div>
                 );
@@ -112,182 +180,208 @@
                 return (
                     <div className="flex items-center justify-center min-h-screen">
                         <div className="card text-center">
-                            <p className="text-red-400 mb-2">Failed to load data</p>
-                            <p className="text-slate-400 text-sm">Please try refreshing the page</p>
+                            <p className="text-red-400 mb-2">⚠️ Failed to load data</p>
+                            <p className="text-slate-400">Please check the console for errors</p>
                         </div>
                     </div>
                 );
             }
 
-            // Process data for charts
-            const timelineData = Object.entries(data.by_date)
-                .map(([date, info]) => ({
-                    date: date.substring(5), // MM-DD
-                    volume: info.volume / 1000000, // Convert to millions
-                    count: info.count,
-                    type: info.type
-                }))
-                .sort((a, b) => a.date.localeCompare(b.date));
-
-            const typeData = [
-                { name: 'Foreclosures', value: data.summary.foreclosures.count, volume: data.summary.foreclosures.volume },
-                { name: 'Tax Deeds', value: data.summary.tax_deeds.count, volume: data.summary.tax_deeds.volume }
-            ];
-
-            // Get all properties and sort by amount
-            const allProperties = [];
-            Object.entries(data.by_date).forEach(([date, info]) => {
-                info.properties.forEach(prop => {
-                    allProperties.push({ ...prop, date });
-                });
-            });
-            const topProperties = allProperties.sort((a, b) => b.sold_amount - a.sold_amount).slice(0, 10);
-
-            // City breakdown
-            const cityCount = {};
-            allProperties.forEach(prop => {
-                cityCount[prop.city] = (cityCount[prop.city] || 0) + 1;
-            });
-            const cityData = Object.entries(cityCount)
-                .map(([city, count]) => ({ city, count }))
-                .sort((a, b) => b.count - a.count)
-                .slice(0, 6);
-
-            const formatCurrency = (value) => `$${(value / 1000000).toFixed(1)}M`;
-
             return (
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="display-font text-4xl font-bold text-white mb-2">
+                        <h1 className="display-font text-4xl font-bold mb-2">
                             Brevard County Auction Data
                         </h1>
                         <p className="text-slate-400">
-                            120-day analysis • {data.date_range.start} to {data.date_range.end}
+                            120-day analysis: {data.date_range.start} to {data.date_range.end}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">
+                            Last updated: {new Date(data.scraped_at).toLocaleString()}
                         </p>
                     </div>
 
-                    {/* Stats Grid */}
+                    {/* Summary Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <div className="card stat-card">
-                            <div className="text-slate-400 text-sm mb-1">Total Properties</div>
-                            <div className="text-3xl font-bold text-white">{data.summary.total_properties}</div>
-                        </div>
-                        <div className="card stat-card">
-                            <div className="text-slate-400 text-sm mb-1">Total Volume</div>
-                            <div className="text-3xl font-bold text-indigo-400">
-                                ${(data.summary.total_volume / 1000000).toFixed(1)}M
+                            <div className="text-sm text-slate-400 mb-1">Total Properties</div>
+                            <div className="text-3xl font-bold text-white">
+                                {data.summary.total_properties}
+                            </div>
+                            <div className="text-xs text-slate-500 mt-1">
+                                {data.summary.total_dates} auction dates
                             </div>
                         </div>
+                        
                         <div className="card stat-card">
-                            <div className="text-slate-400 text-sm mb-1">Foreclosures</div>
-                            <div className="text-3xl font-bold text-purple-400">{data.summary.foreclosures.count}</div>
+                            <div className="text-sm text-slate-400 mb-1">Total Volume</div>
+                            <div className="text-3xl font-bold text-emerald-400">
+                                ${(data.summary.total_volume / 1000000).toFixed(1)}M
+                            </div>
+                            <div className="text-xs text-slate-500 mt-1">
+                                Avg: ${(data.summary.total_volume / data.summary.total_properties / 1000).toFixed(0)}K/property
+                            </div>
                         </div>
+
                         <div className="card stat-card">
-                            <div className="text-slate-400 text-sm mb-1">Tax Deeds</div>
-                            <div className="text-3xl font-bold text-pink-400">{data.summary.tax_deeds.count}</div>
+                            <div className="text-sm text-slate-400 mb-1">Foreclosures</div>
+                            <div className="text-3xl font-bold text-indigo-400">
+                                {data.summary.foreclosures.count}
+                            </div>
+                            <div className="text-xs text-slate-500 mt-1">
+                                ${(data.summary.foreclosures.volume / 1000000).toFixed(1)}M volume
+                            </div>
+                        </div>
+
+                        <div className="card stat-card">
+                            <div className="text-sm text-slate-400 mb-1">Tax Deeds</div>
+                            <div className="text-3xl font-bold text-purple-400">
+                                {data.summary.tax_deeds.count}
+                            </div>
+                            <div className="text-xs text-slate-500 mt-1">
+                                ${(data.summary.tax_deeds.volume / 1000000).toFixed(2)}M volume
+                            </div>
                         </div>
                     </div>
 
-                    {/* Volume Timeline */}
+                    {/* Volume Over Time */}
                     <div className="card mb-8">
-                        <h2 className="text-xl font-bold text-white mb-4">Auction Volume Over Time</h2>
+                        <h2 className="text-xl font-bold mb-4">Auction Volume Over Time</h2>
                         <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={timelineData}>
+                            <BarChart data={chartData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                                 <XAxis dataKey="date" stroke="#94a3b8" />
-                                <YAxis stroke="#94a3b8" tickFormatter={formatCurrency} />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-                                    labelStyle={{ color: '#e2e8f0' }}
-                                    formatter={(value, name) => [formatCurrency(value * 1000000), 'Volume']}
+                                <YAxis stroke="#94a3b8" label={{ value: 'Volume ($M)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
+                                <Tooltip 
+                                    contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                    formatter={(value, name) => name === 'volume' ? [`$${value.toFixed(2)}M`, 'Volume'] : [value, 'Properties']}
                                 />
-                                <Line type="monotone" dataKey="volume" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} />
-                            </LineChart>
+                                <Legend />
+                                <Bar dataKey="volume" fill="#6366f1" name="Volume ($M)" />
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Two Column Layout */}
+                    {/* Type Breakdown */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                        {/* Type Distribution */}
                         <div className="card">
-                            <h2 className="text-xl font-bold text-white mb-4">Foreclosures vs Tax Deeds</h2>
+                            <h2 className="text-xl font-bold mb-4">Property Count by Type</h2>
                             <ResponsiveContainer width="100%" height={250}>
                                 <PieChart>
                                     <Pie
-                                        data={typeData}
+                                        data={typeBreakdown}
                                         cx="50%"
                                         cy="50%"
                                         labelLine={false}
-                                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                        label={({name, value}) => `${name}: ${value}`}
                                         outerRadius={80}
                                         fill="#8884d8"
                                         dataKey="value"
                                     >
-                                        {typeData.map((entry, index) => (
+                                        {typeBreakdown.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-                                        formatter={(value) => [`${value} properties`, 'Count']}
-                                    />
+                                    <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }} />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
 
-                        {/* City Breakdown */}
                         <div className="card">
-                            <h2 className="text-xl font-bold text-white mb-4">Top Cities</h2>
-                            <ResponsiveContainer width="100%" height={250}>
-                                <BarChart data={cityData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                                    <XAxis dataKey="city" stroke="#94a3b8" angle={-45} textAnchor="end" height={80} />
-                                    <YAxis stroke="#94a3b8" />
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-                                        formatter={(value) => [`${value} properties`, 'Count']}
-                                    />
-                                    <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
+                            <h2 className="text-xl font-bold mb-4">Top Cities by Volume</h2>
+                            <div className="space-y-2">
+                                {cityStats.slice(0, 5).map((city, i) => (
+                                    <div key={i} className="flex justify-between items-center py-2 border-b border-slate-700">
+                                        <div>
+                                            <div className="font-medium">{city.city}</div>
+                                            <div className="text-xs text-slate-400">{city.count} properties</div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-emerald-400">
+                                                ${(city.volume / 1000000).toFixed(2)}M
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Filters */}
+                    <div className="card mb-4">
+                        <h2 className="text-xl font-bold mb-4">Filter Properties</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Type</label>
+                                <select 
+                                    className="w-full bg-slate-800 border border-slate-700 rounded px-4 py-2 text-white"
+                                    value={filter.type}
+                                    onChange={(e) => setFilter({...filter, type: e.target.value})}
+                                >
+                                    <option value="ALL">All Types</option>
+                                    <option value="FORECLOSURE">Foreclosures</option>
+                                    <option value="TAX DEED">Tax Deeds</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Minimum Amount</label>
+                                <select 
+                                    className="w-full bg-slate-800 border border-slate-700 rounded px-4 py-2 text-white"
+                                    value={filter.minAmount}
+                                    onChange={(e) => setFilter({...filter, minAmount: parseInt(e.target.value)})}
+                                >
+                                    <option value="0">All Amounts</option>
+                                    <option value="100000">$100K+</option>
+                                    <option value="250000">$250K+</option>
+                                    <option value="500000">$500K+</option>
+                                    <option value="1000000">$1M+</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     {/* Top Properties Table */}
                     <div className="card">
-                        <h2 className="text-xl font-bold text-white mb-4">Top 10 Properties by Value</h2>
+                        <h2 className="text-xl font-bold mb-4">
+                            Top Properties 
+                            <span className="text-sm font-normal text-slate-400 ml-2">
+                                (Showing {topProperties.length} of {data.summary.total_properties})
+                            </span>
+                        </h2>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
+                            <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-slate-700">
-                                        <th className="pb-3 text-slate-400 font-medium">#</th>
-                                        <th className="pb-3 text-slate-400 font-medium">Date</th>
-                                        <th className="pb-3 text-slate-400 font-medium">Address</th>
-                                        <th className="pb-3 text-slate-400 font-medium">City</th>
-                                        <th className="pb-3 text-slate-400 font-medium">Type</th>
-                                        <th className="pb-3 text-slate-400 font-medium text-right">Amount</th>
+                                        <th className="text-left py-3 px-2 text-slate-400 font-medium">Date</th>
+                                        <th className="text-left py-3 px-2 text-slate-400 font-medium">Type</th>
+                                        <th className="text-left py-3 px-2 text-slate-400 font-medium">Address</th>
+                                        <th className="text-left py-3 px-2 text-slate-400 font-medium">City</th>
+                                        <th className="text-right py-3 px-2 text-slate-400 font-medium">Amount</th>
+                                        <th className="text-left py-3 px-2 text-slate-400 font-medium">Winner</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {topProperties.map((prop, idx) => (
-                                        <tr key={idx} className="border-b border-slate-800 hover:bg-slate-800/30 transition">
-                                            <td className="py-3 text-slate-500">{idx + 1}</td>
-                                            <td className="py-3 text-slate-300">{prop.date}</td>
-                                            <td className="py-3 text-white">{prop.address}</td>
-                                            <td className="py-3 text-slate-300">{prop.city}</td>
-                                            <td className="py-3">
-                                                <span className={`px-2 py-1 rounded text-xs ${
+                                    {topProperties.map((prop, i) => (
+                                        <tr key={i} className="property-row border-b border-slate-800">
+                                            <td className="py-3 px-2 text-sm">
+                                                {new Date(prop.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                            </td>
+                                            <td className="py-3 px-2">
+                                                <span className={`text-xs px-2 py-1 rounded ${
                                                     prop.type === 'FORECLOSURE' 
-                                                        ? 'bg-purple-500/20 text-purple-300' 
-                                                        : 'bg-pink-500/20 text-pink-300'
+                                                        ? 'bg-indigo-500/20 text-indigo-300' 
+                                                        : 'bg-purple-500/20 text-purple-300'
                                                 }`}>
                                                     {prop.type}
                                                 </span>
                                             </td>
-                                            <td className="py-3 text-right font-bold text-indigo-400">
-                                                ${(prop.sold_amount / 1000000).toFixed(2)}M
+                                            <td className="py-3 px-2 text-sm">{prop.address}</td>
+                                            <td className="py-3 px-2 text-sm text-slate-400">{prop.city}</td>
+                                            <td className="py-3 px-2 text-right font-bold text-emerald-400">
+                                                ${prop.sold_amount.toLocaleString()}
                                             </td>
+                                            <td className="py-3 px-2 text-sm text-slate-400">{prop.winner_type}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -296,15 +390,16 @@
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-8 text-center text-slate-500 text-sm">
-                        <p>Data from PropertyOnion API (FIPS 12009) • Last updated: {new Date(data.scraped_at).toLocaleDateString()}</p>
-                        <p className="mt-2">Auto-updated daily at 11 PM UTC • {data.summary.total_properties} properties • ${(data.summary.total_volume / 1000000).toFixed(1)}M volume</p>
+                    <div className="mt-8 text-center text-sm text-slate-500">
+                        <p>Data sourced from PropertyOnion API (FIPS 12009)</p>
+                        <p className="mt-1">Updated daily at 11:00 PM UTC</p>
                     </div>
                 </div>
             );
         }
 
-        ReactDOM.render(<DataDashboard />, document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DataDashboard />);
     </script>
 </body>
 </html>
