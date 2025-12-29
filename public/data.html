@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brevard Auction Data | BidDeed.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .display-font {
+            font-family: 'Instrument Serif', Georgia, serif;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="border-b border-slate-700 bg-slate-900/50 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="display-font text-2xl font-bold text-white">BidDeed<span class="text-indigo-400">.AI</span></a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="/" class="nav-link">Home</a>
+                        <a href="/agent.html" class="nav-link">Agent</a>
+                        <a href="/map.html" class="nav-link">Map</a>
+                        <a href="/data.html" class="nav-link text-indigo-400">Data</a>
+                        <a href="/chat.html" class="nav-link">Chat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+
+        const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+
+        function DataDashboard() {
+            const [data, setData] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [selectedView, setSelectedView] = useState('overview');
+
+            useEffect(() => {
+                fetch('https://raw.githubusercontent.com/breverdbidder/brevard-bidder-scraper/main/data/brevard_120day_results_20251229.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        setData(data);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error('Error loading data:', err);
+                        setLoading(false);
+                    });
+            }, []);
+
+            if (loading) {
+                return (
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+                            <p className="text-slate-400">Loading auction data...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!data) {
+                return (
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="card text-center">
+                            <p className="text-red-400 mb-2">Failed to load data</p>
+                            <p className="text-slate-400 text-sm">Please try refreshing the page</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Process data for charts
+            const timelineData = Object.entries(data.by_date)
+                .map(([date, info]) => ({
+                    date: date.substring(5), // MM-DD
+                    volume: info.volume / 1000000, // Convert to millions
+                    count: info.count,
+                    type: info.type
+                }))
+                .sort((a, b) => a.date.localeCompare(b.date));
+
+            const typeData = [
+                { name: 'Foreclosures', value: data.summary.foreclosures.count, volume: data.summary.foreclosures.volume },
+                { name: 'Tax Deeds', value: data.summary.tax_deeds.count, volume: data.summary.tax_deeds.volume }
+            ];
+
+            // Get all properties and sort by amount
+            const allProperties = [];
+            Object.entries(data.by_date).forEach(([date, info]) => {
+                info.properties.forEach(prop => {
+                    allProperties.push({ ...prop, date });
+                });
+            });
+            const topProperties = allProperties.sort((a, b) => b.sold_amount - a.sold_amount).slice(0, 10);
+
+            // City breakdown
+            const cityCount = {};
+            allProperties.forEach(prop => {
+                cityCount[prop.city] = (cityCount[prop.city] || 0) + 1;
+            });
+            const cityData = Object.entries(cityCount)
+                .map(([city, count]) => ({ city, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 6);
+
+            const formatCurrency = (value) => `$${(value / 1000000).toFixed(1)}M`;
+            const formatCount = (value) => value.toLocaleString();
+
+            return (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {/* Header */}
+                    <div className="mb-8">
+                        <h1 className="display-font text-4xl font-bold text-white mb-2">
+                            Brevard County Auction Data
+                        </h1>
+                        <p className="text-slate-400">
+                            120-day analysis • {data.date_range.start} to {data.date_range.end}
+                        </p>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div className="card stat-card">
+                            <div className="text-slate-400 text-sm mb-1">Total Properties</div>
+                            <div className="text-3xl font-bold text-white">{data.summary.total_properties}</div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="text-slate-400 text-sm mb-1">Total Volume</div>
+                            <div className="text-3xl font-bold text-indigo-400">
+                                ${(data.summary.total_volume / 1000000).toFixed(1)}M
+                            </div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="text-slate-400 text-sm mb-1">Foreclosures</div>
+                            <div className="text-3xl font-bold text-purple-400">{data.summary.foreclosures.count}</div>
+                        </div>
+                        <div className="card stat-card">
+                            <div className="text-slate-400 text-sm mb-1">Tax Deeds</div>
+                            <div className="text-3xl font-bold text-pink-400">{data.summary.tax_deeds.count}</div>
+                        </div>
+                    </div>
+
+                    {/* Volume Timeline */}
+                    <div className="card mb-8">
+                        <h2 className="text-xl font-bold text-white mb-4">Auction Volume Over Time</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={timelineData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                <XAxis dataKey="date" stroke="#94a3b8" />
+                                <YAxis stroke="#94a3b8" tickFormatter={formatCurrency} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                    labelStyle={{ color: '#e2e8f0' }}
+                                    formatter={(value, name) => [formatCurrency(value * 1000000), 'Volume']}
+                                />
+                                <Line type="monotone" dataKey="volume" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Two Column Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        {/* Type Distribution */}
+                        <div className="card">
+                            <h2 className="text-xl font-bold text-white mb-4">Foreclosures vs Tax Deeds</h2>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie
+                                        data={typeData}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                        outerRadius={80}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {typeData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                        formatter={(value) => [`${value} properties`, 'Count']}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        {/* City Breakdown */}
+                        <div className="card">
+                            <h2 className="text-xl font-bold text-white mb-4">Top Cities</h2>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <BarChart data={cityData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                    <XAxis dataKey="city" stroke="#94a3b8" angle={-45} textAnchor="end" height={80} />
+                                    <YAxis stroke="#94a3b8" />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                        formatter={(value) => [`${value} properties`, 'Count']}
+                                    />
+                                    <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    {/* Top Properties Table */}
+                    <div className="card">
+                        <h2 className="text-xl font-bold text-white mb-4">Top 10 Properties by Value</h2>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-slate-700">
+                                        <th className="pb-3 text-slate-400 font-medium">#</th>
+                                        <th className="pb-3 text-slate-400 font-medium">Date</th>
+                                        <th className="pb-3 text-slate-400 font-medium">Address</th>
+                                        <th className="pb-3 text-slate-400 font-medium">City</th>
+                                        <th className="pb-3 text-slate-400 font-medium">Type</th>
+                                        <th className="pb-3 text-slate-400 font-medium text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {topProperties.map((prop, idx) => (
+                                        <tr key={idx} className="border-b border-slate-800 hover:bg-slate-800/30 transition">
+                                            <td className="py-3 text-slate-500">{idx + 1}</td>
+                                            <td className="py-3 text-slate-300">{prop.date}</td>
+                                            <td className="py-3 text-white">{prop.address}</td>
+                                            <td className="py-3 text-slate-300">{prop.city}</td>
+                                            <td className="py-3">
+                                                <span className={`px-2 py-1 rounded text-xs ${
+                                                    prop.type === 'FORECLOSURE' 
+                                                        ? 'bg-purple-500/20 text-purple-300' 
+                                                        : 'bg-pink-500/20 text-pink-300'
+                                                }`}>
+                                                    {prop.type}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 text-right font-bold text-indigo-400">
+                                                ${(prop.sold_amount / 1000000).toFixed(2)}M
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-8 text-center text-slate-500 text-sm">
+                        <p>Data scraped from PropertyOnion API • Last updated: {new Date(data.scraped_at).toLocaleDateString()}</p>
+                        <p className="mt-2">Auto-updated daily at 11 PM UTC</p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<DataDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
