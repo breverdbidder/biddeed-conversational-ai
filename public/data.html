@@ -81,17 +81,18 @@
         function DataDashboard() {
             const [data, setData] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [selectedView, setSelectedView] = useState('overview');
 
             useEffect(() => {
-                fetch('https://raw.githubusercontent.com/breverdbidder/brevard-bidder-scraper/main/data/brevard_120day_results_20251229.json')
+                // Fetch from same domain - works with Cloudflare Pages
+                fetch('/data/brevard_120day_results_20251229.json')
                     .then(res => res.json())
                     .then(data => {
+                        console.log('✅ Data loaded:', data.summary);
                         setData(data);
                         setLoading(false);
                     })
                     .catch(err => {
-                        console.error('Error loading data:', err);
+                        console.error('❌ Error loading data:', err);
                         setLoading(false);
                     });
             }, []);
@@ -101,7 +102,7 @@
                     <div className="flex items-center justify-center min-h-screen">
                         <div className="text-center">
                             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-                            <p className="text-slate-400">Loading auction data...</p>
+                            <p className="text-slate-400">Loading 120 days of auction data...</p>
                         </div>
                     </div>
                 );
@@ -153,7 +154,6 @@
                 .slice(0, 6);
 
             const formatCurrency = (value) => `$${(value / 1000000).toFixed(1)}M`;
-            const formatCount = (value) => value.toLocaleString();
 
             return (
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -297,8 +297,8 @@
 
                     {/* Footer */}
                     <div className="mt-8 text-center text-slate-500 text-sm">
-                        <p>Data scraped from PropertyOnion API • Last updated: {new Date(data.scraped_at).toLocaleDateString()}</p>
-                        <p className="mt-2">Auto-updated daily at 11 PM UTC</p>
+                        <p>Data from PropertyOnion API (FIPS 12009) • Last updated: {new Date(data.scraped_at).toLocaleDateString()}</p>
+                        <p className="mt-2">Auto-updated daily at 11 PM UTC • {data.summary.total_properties} properties • ${(data.summary.total_volume / 1000000).toFixed(1)}M volume</p>
                     </div>
                 </div>
             );
