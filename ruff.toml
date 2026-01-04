@@ -1,0 +1,77 @@
+# ruff.toml - BidDeed.AI Code Quality Configuration
+# Deployed: January 3, 2026
+# Purpose: Fast Python linting/formatting (replaces flake8, black, isort)
+
+target-version = "py311"
+line-length = 100
+indent-width = 4
+
+[lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "G",      # flake8-logging-format
+    "PIE",    # flake8-pie
+    "T20",    # flake8-print
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate
+    "PL",     # pylint
+    "TRY",    # tryceratops
+    "RUF",    # ruff-specific rules
+    "ASYNC",  # flake8-async (critical for httpx scrapers)
+]
+
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "PLR0913", # too many arguments (LangGraph nodes need many params)
+    "TRY003",  # long exception messages (helpful for debugging scrapers)
+    "EM101",   # raw string in exception (cleaner error messages)
+    "PLR2004", # magic values (auction logic has known constants)
+]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",    # allow assert in tests
+    "ARG",     # allow unused arguments in fixtures
+    "PLR2004", # allow magic values in tests
+]
+"src/nodes/**/*.py" = [
+    "PLR0912", # allow complex conditionals (LangGraph orchestration logic)
+    "PLR0915", # allow long functions (agent nodes can be complex)
+]
+"src/scrapers/**/*.py" = [
+    "T201",    # allow print() in scrapers (debugging web scraping)
+]
+
+[lint.isort]
+known-first-party = ["biddeed"]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[lint.pydocstyle]
+convention = "google"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
