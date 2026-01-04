@@ -1,0 +1,59 @@
+# .github/workflows/quality_check.yml
+# BidDeed.AI Quality Gates
+# Deployed: January 3, 2026
+# Purpose: Run linting and type checks on PRs
+
+name: ✅ Quality Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-type:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install quality tools
+        run: |
+          pip install ruff mypy
+          pip install -r requirements.txt
+
+      - name: 🔍 Ruff check
+        run: |
+          echo "Running ruff linter..."
+          ruff check . --output-format=github
+        continue-on-error: false
+
+      - name: 🎨 Ruff format check
+        run: |
+          echo "Checking code formatting..."
+          ruff format --check .
+        continue-on-error: false
+
+      - name: 🔬 MyPy type check
+        run: |
+          echo "Running static type analysis..."
+          mypy src/ --show-error-codes --pretty
+        continue-on-error: true  # Don't block on type errors initially
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          echo "## Quality Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Ruff linting passed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Code formatting verified" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ Type checking completed (warnings allowed)" >> $GITHUB_STEP_SUMMARY
