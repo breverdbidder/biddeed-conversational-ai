@@ -1,0 +1,36 @@
+# pyproject.toml - BidDeed.AI Project Configuration
+# Deployed: January 3, 2026
+# Purpose: Tool configurations and project metadata
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv", "node_modules"]
+skips = ["B101"]  # Allow assert in tests
+
+[tool.bandit.assert_used]
+skips = ["*/test_*.py", "*/tests/*.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--showlocals",
+    "--tb=short",
+]
+markers = [
+    "scraper: marks tests that interact with external websites",
+    "integration: marks integration tests that require full stack",
+    "unit: marks unit tests that are fast and isolated",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "venv/*", ".venv/*"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
