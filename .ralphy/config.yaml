@@ -1,0 +1,83 @@
+# =============================================================================
+# RALPHY PROJECT CONFIGURATION - BidDeed Conversational AI
+# =============================================================================
+# Manus AI-style conversational agent for tax deed & foreclosure investing
+# =============================================================================
+
+project:
+  name: "BidDeed Conversational AI"
+  description: "Manus AI-style conversational agent for foreclosure investing"
+  language: "TypeScript"
+  framework: "Next.js + LangGraph"
+  version: "1.0.0"
+
+repository:
+  owner: "breverdbidder"
+  name: "biddeed-conversational-ai"
+  default_branch: "main"
+  
+commands:
+  test: "npm test"
+  lint: "npm run lint"
+  build: "npm run build"
+  dev: "npm run dev"
+  
+checks:
+  - "npm run lint"
+  - "npm run typecheck"
+
+rules:
+  # Code style
+  - "Use TypeScript strict mode"
+  - "Next.js App Router conventions"
+  - "Tailwind CSS for styling"
+  
+  # UI
+  - "Split-screen UI: chat left, results right"
+  - "Voice interface support"
+  - "Mobile responsive"
+  
+  # AI
+  - "Natural language queries for foreclosure data"
+  - "LangGraph agent for autonomous research"
+  - "Connect to BidDeed.AI data sources"
+  
+  # Data integrity
+  - "Cite auction sources"
+  - "Show confidence levels on predictions"
+
+boundaries:
+  never_touch:
+    - "*.env*"
+    - "*.lock"
+    - "node_modules/**"
+    - ".next/**"
+    
+  caution:
+    - "src/agents/**"
+    - "src/api/**"
+
+llm_config:
+  default_model: "claude-sonnet-4-5-20250929"
+  fallback_model: "gemini-2.5-flash"
+  
+execution:
+  max_iterations: 50
+  timeout_minutes: 60
+  retry_attempts: 3
+  
+commit:
+  prefix: "💬"
+  format: "{prefix} {type}: {description}"
+
+integrations:
+  supabase:
+    tables:
+      - "sprint_tasks"
+      - "insights"
+      - "conversations"
+      - "query_history"
+    
+  github:
+    auto_commit: true
+    auto_push: true
