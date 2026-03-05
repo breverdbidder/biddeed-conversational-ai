@@ -14,7 +14,7 @@ BidDeed.AI V16.5.0 - Agentic AI foreclosure research platform for Brevard County
 - Maps: Leaflet 1.9.4 + CartoDB Dark tiles
 - Backend: Cloudflare Pages Functions
 - Database: Supabase (PostgreSQL)
-- LLM: Smart Router V5 (Gemini 2.5 Flash FREE default)
+- LLM: Smart Router V5 (Gemini 2.5 Flash FREE default, Claude Sonnet 4.5 fallback)
 
 ## Key Files
 ```

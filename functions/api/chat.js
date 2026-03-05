@@ -3,16 +3,16 @@
  * Route: /api/chat  (POST)
  * Primary: LiteLLM Smart Router (biddeed-litellm.onrender.com)
  * Fallback: Anthropic API direct (claude-sonnet-4-20250514)
- * Updated: 2026-03-05 · V3 House Brand
+ * Updated: 2026-03-05 · V16.5 House Brand
  */
 
 const LITELLM_URL   = "https://biddeed-litellm.onrender.com/chat/completions";
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
-const ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
+const ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
 
 const SYSTEM_PROMPT = `You are BidDeed.AI — an autonomous foreclosure auction intelligence system for Brevard County, Florida. You orchestrate four AI capabilities: Perceptive (data scraping), Semantic (lien interpretation), Analytical (XGBoost + max bid formula), and Agentic (12-stage Everest Ascent pipeline).
 
-LIVE AUCTION DATA — Brevard County · March 4, 2026:
+LIVE AUCTION DATA — Brevard County · March 5, 2026:
 
 PROPERTY 1 — 1737 Guldahl Dr, Titusville 32780
 Decision: REVIEW | Max Bid: $143,393 | Market: $223,380 | AVM: $299,133 | Judgment: MISSING

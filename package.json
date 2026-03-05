@@ -1,6 +1,6 @@
 {
   "name": "biddeed-conversational-ai",
-  "version": "1.0.0",
+  "version": "16.5.0",
   "description": "Split-screen autonomous AI agent for tax deed & foreclosure investing",
   "type": "module",
   "scripts": {
