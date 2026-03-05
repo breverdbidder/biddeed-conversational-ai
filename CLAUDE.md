@@ -92,3 +92,25 @@ curl -s -o /dev/null -w "%{http_code}" https://brevard-bidder-landing.pages.dev/
 
 ## Owner
 Ariel Shapira - Solo Founder, Everest Capital USA
+
+
+
+## AI Taxonomy — Positioning Context for NLP Responses
+
+### BidDeed.AI One-Liner
+"BidDeed.AI orchestrates four AI capabilities — Perceptive, Semantic, Analytical, and Agentic —
+into the only autonomous decision system built for Florida foreclosure auctions."
+
+### ZoneWise.AI One-Liner
+"ZoneWise.AI is the first unified zoning intelligence platform across all 67 Florida counties —
+four AI capabilities, 245,017 parcels, refreshed daily, zero human triggers."
+
+### How to Answer "What Is This?"
+- NEVER say: "AI-powered tool" or "we use machine learning"
+- ALWAYS say: "Four AI capabilities composed into one system: [Perceptive/Semantic/Analytical/Agentic]"
+- Verb framing: it SENSES, UNDERSTANDS, DECIDES, ACTS
+
+### Positioning: Agentic AI Ecosystem (NOT SaaS)
+- Not software you configure — infrastructure that runs autonomously
+- The value is in the composition architecture, not any single capability
+- Differentiation: PropertyOnion = Analytical only. BidDeed.AI = 4-layer composition.
