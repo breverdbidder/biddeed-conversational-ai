@@ -1,0 +1,35 @@
+name: Sync API Keys to Gateway
+on:
+  workflow_dispatch:
+jobs:
+  sync-keys:
+    name: Copy Gemini + DeepSeek keys to everest-dispatch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: pip install pynacl requests
+      - name: Sync secrets
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python3 -c "
+          import os, requests
+          from base64 import b64encode
+          from nacl import encoding, public
+          TOKEN = os.environ['GH_TOKEN']
+          TARGET = 'breverdbidder/everest-dispatch'
+          H = {'Authorization': f'token {TOKEN}', 'Content-Type': 'application/json'}
+          r = requests.get(f'https://api.github.com/repos/{TARGET}/actions/secrets/public-key', headers=H)
+          pd = r.json()
+          KID, PK = pd['key_id'], pd['key']
+          def set_s(name, val):
+              pk = public.PublicKey(PK.encode('utf-8'), encoding.Base64Encoder())
+              enc = b64encode(public.SealedBox(pk).encrypt(val.encode('utf-8'))).decode('utf-8')
+              r = requests.put(f'https://api.github.com/repos/{TARGET}/actions/secrets/{name}', headers=H, json={'encrypted_value': enc, 'key_id': KID})
+              print(f'{name}: HTTP {r.status_code}')
+          set_s('GEMINI_API_KEY_1', os.environ['GEMINI_KEY'])
+          set_s('DEEPSEEK_API_KEY', os.environ['DEEPSEEK_KEY'])
+          print('Synced!')
+          "
