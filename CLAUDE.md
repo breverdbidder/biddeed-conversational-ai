@@ -1,116 +1,45 @@
-# CLAUDE.md - BidDeed.AI Conversational Agent
+# CLAUDE.md — BidDeed.AI / Everest Capital USA
 
-## Project Context
-BidDeed.AI V16.5.0 - Agentic AI foreclosure research platform for Brevard County, Florida.
+## Who I Am
+Ariel Shapira. Solo founder of BidDeed.AI and Everest Capital USA. 10+ years foreclosure investing in Brevard County, Florida. Licensed FL broker and general contractor. Building an AI-powered foreclosure auction intelligence platform. ADHD — I need systems that run themselves.
 
-## URLs
-- Agent: https://brevard-bidder-landing.pages.dev/agent
-- Map: https://brevard-bidder-landing.pages.dev/map
-- Chat: https://brevard-bidder-landing.pages.dev/chat
-- Repo: https://github.com/breverdbidder/biddeed-conversational-ai
+## My Stack
+- **Repos:** github.com/breverdbidder/* (cli-anything-biddeed, zonewise-scraper-v4, biddeed-ai, biddeed-ai-ui, zonewise-web, cliproxy-gateway, tax-insurance-optimizer)
+- **Database:** Supabase (mocerqjnksmhcjzxrewo.supabase.co) — multi_county_auctions (245K rows), activities, insights, daily_metrics
+- **Compute:** Hetzner everest-dispatch (87.99.129.125) with CLIProxyAPI on 127.0.0.1:8317
+- **AI:** Gemini Flash (FREE via CLIProxyAPI), DeepSeek V3.2 ($0.28/1M), Claude (Max plan, never API)
+- **Deploy:** GitHub Actions + Cloudflare Pages + Render
+- **Brand:** Navy #1E3A5F, Orange #F59E0B, Inter font, bg #020617
 
-## Stack
-- Frontend: Vanilla JS + CSS (no React/Vue)
-- Maps: Leaflet 1.9.4 + CartoDB Dark tiles
-- Backend: Cloudflare Pages Functions
-- Database: Supabase (PostgreSQL)
-- LLM: Smart Router V5 (Gemini 2.5 Flash FREE default, Claude Sonnet 4.5 fallback)
+## Context Rules
 
-## Key Files
-```
-public/
-├── agent.html    # Main agent UI (split-screen)
-├── map.html      # Leaflet foreclosure map
-├── chat.html     # Standalone chat
-├── _redirects    # URL routing
-functions/api/
-└── chat.js       # Cloudflare Worker for LLM calls
-```
+When I mention an auction or property → query Supabase `multi_county_auctions` first
+When I mention a case number → search `multi_county_auctions` by case_number field
+When analyzing a deal → apply max bid formula: (ARV×70%)-Repairs-$10K-MIN($25K,15%×ARV)
+When I ask about pipeline health → check `daily_metrics` and recent GitHub Action runs
+When I mention a county → check if config exists in `counties/` before assuming anything
+When something needs building → follow cli-anything HARNESS.md 7-phase pattern
+When deploying code → push to GitHub, never local installs or Google Drive
+When spending money → stop and confirm if >$10/session
+When I context-switch mid-task → flag it: "📌 [previous task] is still open"
+When I say "Summit" → execute immediately, no questions, no clarification
 
-## Deployment
-Auto-deploys to Cloudflare Pages on `git push origin main`.
+## How I Work
+- Direct, no softening language. Facts and actions.
+- Cost discipline: $10/session max. Batch operations. One attempt per approach.
+- Zero HITL: try 3 alternatives before surfacing a blocker.
+- Execute first, report results. Don't ask what to do.
+- Push back with strong opinions when you disagree.
+- Wrong = "I was wrong." Never invent numbers.
 
-## Environment Variables (Cloudflare Pages)
-```
-ANTHROPIC_API_KEY
-GOOGLE_API_KEY
-SUPABASE_URL
-SUPABASE_KEY
-```
+## Slash Commands
+- `/auction-brief` — morning auction briefing from Supabase
+- `/county-setup` — onboard a new Florida county
+- `/deal-intel` — process foreclosure documents into structured data
+- `/tldr` — end-of-session summary, updates memory.md
+- `/transcript` — YouTube video analysis via Hetzner pipeline
 
-## Coding Standards
-- Single-file HTML with inline CSS/JS (no build step)
-- CSS variables for theming
-- Mobile-first responsive design
-- Dark mode default
-- No external dependencies except CDN libraries
-
-## Design System
-```css
-:root {
-  --bg: #0a0a0f;
-  --bg2: #12121a;
-  --bg3: #1a1a24;
-  --border: #2a2a3a;
-  --text: #f0f0f5;
-  --text2: #8888a0;
-  --accent: #38bdf8;
-  --purple: #a78bfa;
-  --success: #22c55e;
-  --warn: #eab308;
-  --error: #ef4444;
-}
-```
-
-## Commands
-
-### Test locally
-```bash
-npx serve public
-```
-
-### Deploy
-```bash
-git add -A && git commit -m "Update" && git push
-```
-
-### Check status
-```bash
-curl -s -o /dev/null -w "%{http_code}" https://brevard-bidder-landing.pages.dev/agent
-```
-
-## Agentic Execution Rules
-1. NEVER ask permission - execute and report
-2. Update this file when architecture changes
-3. Test all endpoints after deployment
-4. Push directly to main branch
-5. Use GitHub API for file updates (no git clone)
-
-## Related Repos
-- `breverdbidder/brevard-bidder-scraper` - Original scraper + pipelines
-- `breverdbidder/life-os` - Personal Life OS system
-
-## Owner
-Ariel Shapira - Solo Founder, Everest Capital USA
-
-
-
-## AI Taxonomy — Positioning Context for NLP Responses
-
-### BidDeed.AI One-Liner
-"BidDeed.AI orchestrates four AI capabilities — Perceptive, Semantic, Analytical, and Agentic —
-into the only autonomous decision system built for Florida foreclosure auctions."
-
-### ZoneWise.AI One-Liner
-"ZoneWise.AI is the first unified zoning intelligence platform across all 67 Florida counties —
-four AI capabilities, 245,017 parcels, refreshed daily, zero human triggers."
-
-### How to Answer "What Is This?"
-- NEVER say: "AI-powered tool" or "we use machine learning"
-- ALWAYS say: "Four AI capabilities composed into one system: [Perceptive/Semantic/Analytical/Agentic]"
-- Verb framing: it SENSES, UNDERSTANDS, DECIDES, ACTS
-
-### Positioning: Agentic AI Ecosystem (NOT SaaS)
-- Not software you configure — infrastructure that runs autonomously
-- The value is in the composition architecture, not any single capability
-- Differentiation: PropertyOnion = Analytical only. BidDeed.AI = 4-layer composition.
+## Family Context (when relevant)
+- Wife Mariam: runs Property360 real estate, Protection Partners insurance, contracting
+- Son Michael (16): D1 competitive swimmer, Satellite Beach HS, keto diet, Shabbat observance
+- Orthodox practices: Shabbat (no work Fri sunset–Sat havdalah), kosher, holidays
