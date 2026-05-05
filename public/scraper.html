@@ -1168,32 +1168,123 @@ async function openLotModal(lotId){
     modalRow('Cert holder', lot.cert_holder),
   ].filter(Boolean).join('');
 
-  // Zoning section (Brevard only — only when parcel is present)
+  // Zoning section — comprehensive: parcel-level (Brevard) + code dictionary (66 counties)
   let zoningHtml = '';
-  if (parcel && (parcel.zoning_code || parcel.luse_code)) {
-    const permittedUses = parcel.zoning_permitted
-      ? (Array.isArray(parcel.zoning_permitted) ? parcel.zoning_permitted.join(', ') : (typeof parcel.zoning_permitted === 'object' ? JSON.stringify(parcel.zoning_permitted) : parcel.zoning_permitted))
+  const zoning = detail.zoning || {};
+  const pZone = zoning.parcel_zone;       // public.parcel_zones (Brevard)
+  const zEnv = zoning.envelope;            // public.envelope_cache (Brevard, with setbacks)
+  const zAssign = zoning.assignment;       // public.zoning_assignments (Brevard, with confidence)
+  const zCode = zoning.code_lookup;        // public.zoning_codes (cross-county dictionary lookup)
+  const zSummary = zoning.county_summary;  // public.zoning_codes county-level coverage stats
+
+  const hasParcelZoning = !!(parcel && (parcel.zoning_code || parcel.luse_code))
+                          || !!pZone || !!zAssign || !!zEnv || !!zCode;
+
+  if (hasParcelZoning) {
+    // Build the comprehensive Brevard / known-code zoning panel
+    const code = (parcel && parcel.zoning_code) || pZone?.zone_code || zAssign?.zone_code || zEnv?.zone_code;
+    const desc = (parcel && parcel.zoning_desc) || pZone?.zone_name || zCode?.zoning_desc;
+    const cat = (parcel && parcel.zoning_category) || zCode?.category;
+    const jurisdiction = (parcel && parcel.zoning_jurisdiction) || zAssign?.jurisdiction || zCode?.jurisdiction;
+
+    // Setbacks — prefer envelope_cache (more authoritative), fall back to parcel zoning_setbacks
+    const fSetback = zEnv?.front_setback_ft;
+    const sSetback = zEnv?.side_setback_ft;
+    const rSetback = zEnv?.rear_setback_ft;
+    const setbackTxt = (fSetback || sSetback || rSetback)
+      ? `front ${fSetback || '—'} / side ${sSetback || '—'} / rear ${rSetback || '—'} ft`
+      : (parcel && parcel.zoning_setbacks ? (typeof parcel.zoning_setbacks === 'object' ? JSON.stringify(parcel.zoning_setbacks) : parcel.zoning_setbacks) : null);
+
+    const maxHt = zEnv?.max_height_ft || (parcel && parcel.zoning_max_ht) || zCode?.max_height_ft;
+    const maxCov = zEnv?.max_lot_coverage;
+    const far = zEnv?.far;
+    const buildable = zEnv?.buildable_gfa_sf;
+
+    const permitted = (parcel && parcel.zoning_permitted) || zCode?.permitted_uses;
+    const permittedTxt = permitted
+      ? (Array.isArray(permitted) ? permitted.slice(0,12).join(', ') + (permitted.length > 12 ? `, +${permitted.length-12} more` : '') : (typeof permitted === 'object' ? JSON.stringify(permitted).slice(0,200) : String(permitted)))
       : null;
+
     const zRows = [
-      modalRow('Zoning code', parcel.zoning_code, { mono: true }),
-      modalRow('Zoning class', parcel.zoning_desc),
-      modalRow('Category', parcel.zoning_category),
-      modalRow('Jurisdiction', parcel.zoning_jurisdiction),
-      modalRow('Land use', parcel.luse_desc || parcel.luse_code),
-      modalRow('Future land use', parcel.flu_desc || parcel.flu_code),
-      modalRow('Max height', parcel.zoning_max_ht ? `${parcel.zoning_max_ht} ft` : null),
-      modalRow('Min lot', parcel.zoning_min_lot),
-      modalRow('Setbacks', parcel.zoning_setbacks),
-      modalRow('Permitted uses', permittedUses),
-      modalRow('Flood zone', parcel.flood_zone),
+      modalRow('Zoning code', code, { mono: true }),
+      modalRow('Description', desc),
+      modalRow('Category', cat),
+      modalRow('Jurisdiction', jurisdiction),
+      modalRow('Land use', parcel && (parcel.luse_desc || parcel.luse_code)),
+      modalRow('Future land use', (parcel && (parcel.flu_desc || parcel.flu_code)) || pZone?.future_land_use),
+      modalRow('Max height', maxHt ? `${maxHt} ft` : null),
+      modalRow('Setbacks', setbackTxt),
+      modalRow('Max lot coverage', maxCov ? `${maxCov}%` : null),
+      modalRow('FAR', far),
+      modalRow('Buildable envelope', buildable ? `${Number(buildable).toLocaleString()} sf` : null),
+      modalRow('Min lot size', (parcel && parcel.zoning_min_lot) || zCode?.min_lot_size),
+      modalRow('Max density', zCode?.max_density),
+      modalRow('Flood zone', parcel && parcel.flood_zone),
+      modalRow('Confidence', zAssign?.confidence != null ? `${Math.round(zAssign.confidence * 100)}%` : null),
+      modalRow('Permitted uses', permittedTxt),
     ].filter(Boolean).join('');
+
+    const sourceBadges = [
+      parcel && (parcel.zoning_code || parcel.luse_code) ? '<span class="badge">zw_parcels</span>' : '',
+      pZone ? '<span class="badge">parcel_zones</span>' : '',
+      zAssign ? '<span class="badge">zoning_assignments</span>' : '',
+      zEnv ? '<span class="badge">envelope_cache</span>' : '',
+      zCode ? '<span class="badge">zoning_codes</span>' : '',
+    ].filter(Boolean).join('');
+
+    const codeUrl = zCode?.municode_url;
+    const codeUrlBtn = codeUrl
+      ? `<a href="${escapeHtml(codeUrl)}" target="_blank" rel="noopener" class="modal-action-btn" style="margin-top:14px;">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M21 3l-9 9M5 9v12h12"/></svg>
+           View ${escapeHtml(jurisdiction || '')} Municipal Code
+         </a>` : '';
+
     if (zRows) {
       zoningHtml = `
         <div class="modal-section">
-          <div class="modal-section-title">Zoning <span class="badge">ZoneWise · Brevard</span></div>
+          <div class="modal-section-title">Zoning ${sourceBadges}</div>
           <div class="modal-grid">${zRows}</div>
+          ${codeUrlBtn}
         </div>`;
     }
+  } else if (zSummary) {
+    // No parcel-level data, but we DO have the county-level zoning code dictionary
+    const catChips = (zSummary.categories || []).map(c =>
+      `<span class="modal-pill" style="font-size:10px;">${escapeHtml(c)}</span>`
+    ).join(' ');
+    const juriList = (zSummary.jurisdictions || []).slice(0, 12).join(' · ');
+    const juriOverflow = (zSummary.jurisdictions || []).length > 12 ? ` +${zSummary.jurisdictions.length - 12} more` : '';
+
+    zoningHtml = `
+      <div class="modal-section">
+        <div class="modal-section-title">Zoning <span class="badge">zoning_codes · ${escapeHtml(lot.county || '')}</span></div>
+        <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 14px;">
+          ZoneWise has loaded
+          <strong style="color: var(--orange); font-family: 'JetBrains Mono', monospace;">${zSummary.total_codes}</strong> zoning codes
+          for ${escapeHtml(lot.county || 'this county')} across
+          <strong style="color: var(--orange); font-family: 'JetBrains Mono', monospace;">${zSummary.jurisdictions_count}</strong>
+          jurisdictions and <strong>${zSummary.categories_count}</strong> categories.
+          Parcel-level zoning assignments for this county aren't loaded yet — that's on the zonewise-modal scraper roadmap (Phase 2: Giant County Adapters).
+        </div>
+        <div style="margin-bottom: 12px;">
+          <div class="modal-kv-label" style="margin-bottom: 6px;">Categories Available</div>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap;">${catChips}</div>
+        </div>
+        <div>
+          <div class="modal-kv-label" style="margin-bottom: 6px;">Jurisdictions</div>
+          <div style="font-size: 12px; color: var(--text-mute); line-height: 1.6;">${escapeHtml(juriList)}${juriOverflow}</div>
+        </div>
+      </div>`;
+  } else {
+    // No zoning data at all (rare — Liberty/Calhoun-level coverage gap)
+    zoningHtml = `
+      <div class="modal-section">
+        <div class="modal-section-title">Zoning <span class="badge">not loaded</span></div>
+        <div style="font-size: 13px; color: var(--text-mute); line-height: 1.6;">
+          Zoning data for ${escapeHtml(lot.county || 'this county')} hasn't been loaded into ZoneWise yet.
+          Look up via the Property Appraiser link above — most county PA sites display the zoning code on the parcel detail page.
+        </div>
+      </div>`;
   }
 
   // Owner section
