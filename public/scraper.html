@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BidDeed.AI · Scraper Live · Brevard County</title>
+<meta name="description" content="Live operational dashboard for the BidDeed.AI Florida foreclosure + tax-deed auction scraper. Mirrors RealAuction.com calendar UX framework.">
+
+<!-- realauction.com calendar framework compatibility:
+     CSS class names (.CALDAYBOX, .CALBOX), dayid data-attribute (mm/dd/yyyy),
+     and the click→AUCTIONDATE-URL navigation pattern are intentionally
+     mirrored from the captured /reference/realauction-ui/ codebase so users
+     migrating from realauction.com / realforeclose.com keep their muscle memory.
+     House brand (Navy #1E3A5F · Orange #F59E0B · Inter · bg #020617) is
+     layered on top — Everest Capital USA · BidDeed.AI · 2026 -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #020617;
+    --surface-1: #0B1220;
+    --surface-2: #0F172A;
+    --surface-3: #1E293B;
+    --border:    #1E293B;
+    --border-strong: #334155;
+    --navy:      #1E3A5F;
+    --orange:    #F59E0B;
+    --orange-soft: rgba(245,158,11,0.12);
+    --orange-glow: rgba(245,158,11,0.28);
+    --text:      #F8FAFC;
+    --text-mute: #94A3B8;
+    --text-dim:  #64748B;
+    --green:     #10B981;
+    --green-soft:rgba(16,185,129,0.14);
+    --red:       #EF4444;
+    --red-soft:  rgba(239,68,68,0.14);
+    --amber:     #FBBF24;
+    --amber-soft:rgba(251,191,36,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  body { background-image:
+    radial-gradient(circle at 20% -10%, rgba(30,58,95,0.35), transparent 50%),
+    radial-gradient(circle at 110% 110%, rgba(245,158,11,0.06), transparent 40%);
+    background-attachment: fixed;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace; font-feature-settings: 'tnum' 1, 'zero' 1; }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 24px 28px 64px; }
+
+  /* ── Header ────────────────────────────────────────────── */
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--navy); border: 1px solid var(--border-strong); border-radius: 8px; position: relative; overflow: hidden; }
+  .brand-mark::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 50%, var(--orange-soft) 100%); }
+  .brand-mark svg { position: relative; z-index: 1; }
+  .brand-text h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-text p  { font-size: 12px; color: var(--text-mute); margin-top: 2px; letter-spacing: 0.02em; }
+  .header-meta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface-2); }
+  .pill-live { background: var(--green-soft); border-color: rgba(16,185,129,0.3); color: var(--green); }
+  .pill-degraded { background: var(--amber-soft); border-color: rgba(251,191,36,0.3); color: var(--amber); }
+  .pill-failed { background: var(--red-soft); border-color: rgba(239,68,68,0.3); color: var(--red); }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 0 currentColor; animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+    70%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  }
+  .clock-text { font-size: 12px; color: var(--text-mute); }
+  .clock-text strong { color: var(--text); font-weight: 600; }
+
+  /* ── KPI Tiles ──────────────────────────────────────────── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+  .kpi { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; position: relative; overflow: hidden; }
+  .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--orange); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+  .kpi.has-data::before { transform: scaleX(1); }
+  .kpi-label { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .kpi-value { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
+  .kpi-value.warn { color: var(--amber); }
+  .kpi-value.fail { color: var(--red); }
+  .kpi-value.ok { color: var(--green); }
+  .kpi-meta { font-size: 11px; color: var(--text-mute); margin-top: 8px; }
+  .kpi-meta .delta-up { color: var(--green); }
+  .kpi-meta .delta-down { color: var(--red); }
+  .kpi-meta .delta-flat { color: var(--text-mute); }
+
+  /* ── Two-column layout (calendar + right rail) ────────── */
+  .main-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; margin-bottom: 28px; }
+  @media (max-width: 1024px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 540px) {
+    .container { padding: 16px 14px 48px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi { padding: 14px; }
+    .kpi-value { font-size: 28px; }
+  }
+
+  /* ── Card primitive ─────────────────────────────────────── */
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+  .card-title { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+  .card-title-meta { font-size: 11px; color: var(--text-mute); font-weight: 500; }
+  .card-action { font-size: 11px; color: var(--text-mute); display: inline-flex; gap: 8px; align-items: center; }
+  .card-action button {
+    background: transparent; border: 1px solid var(--border-strong); color: var(--text);
+    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .card-action button:hover { border-color: var(--orange); color: var(--orange); }
+  .card-action button.primary { background: var(--orange); border-color: var(--orange); color: var(--bg); font-weight: 600; }
+
+  /* ── CALDAYBOX (realauction-compatible calendar) ─────────── */
+  .CALDAYBOX {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    user-select: none;
+  }
+  .CALHEADER {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+    padding: 10px 4px 4px;
+  }
+  .CALBOX {
+    aspect-ratio: 1.05 / 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 9px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 64px;
+  }
+  .CALBOX[dayid]              { cursor: pointer; }
+  .CALBOX[dayid]:hover        { border-color: var(--orange); transform: translateY(-1px); }
+  .CALBOX[dayid].CALSELT      { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-glow); }
+  .CALBOX.empty               { background: transparent; border-color: transparent; pointer-events: none; }
+  .CALBOX.weekend             { background: var(--surface-1); }
+  .CALBOX.has-auction         { background: var(--surface-2); }
+  .CALBOX.scraped-success     { background: linear-gradient(155deg, rgba(245,158,11,0.10) 0%, var(--surface-1) 60%); border-color: rgba(245,158,11,0.4); }
+  .CALBOX.scraped-success::after { content: ''; position: absolute; right: 8px; bottom: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+  .CALBOX.scraped-partial     { background: linear-gradient(155deg, rgba(251,191,36,0.10) 0%, var(--surface-1) 60%); border-color: rgba(251,191,36,0.35); }
+  .CALBOX.scraped-partial::after { content: ''; position: absolute; right: 8px; bottom: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .CALBOX.scraped-failed      { background: linear-gradient(155deg, rgba(239,68,68,0.12) 0%, var(--surface-1) 60%); border-color: rgba(239,68,68,0.4); }
+  .CALBOX.scraped-failed::after { content: ''; position: absolute; right: 8px; bottom: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .CALBOX.today               { box-shadow: 0 0 0 2px var(--navy), 0 0 0 3px var(--orange); }
+
+  .CAL-day-num { font-size: 14px; font-weight: 600; line-height: 1; color: var(--text); }
+  .CALBOX.weekend .CAL-day-num { color: var(--text-dim); }
+  .CALBOX.today .CAL-day-num { color: var(--orange); font-weight: 700; }
+  .CAL-day-meta { font-size: 9px; color: var(--text-mute); font-weight: 500; letter-spacing: 0.04em; }
+  .CAL-day-stat { font-size: 11px; font-weight: 600; color: var(--text); }
+  .CAL-day-stat.dim { color: var(--text-mute); }
+
+  /* Calendar nav */
+  .cal-nav { display: flex; align-items: center; gap: 12px; }
+  .cal-nav button { background: transparent; border: 1px solid var(--border-strong); color: var(--text); width: 28px; height: 28px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; }
+  .cal-nav button:hover { border-color: var(--orange); color: var(--orange); }
+  .cal-nav-label { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; min-width: 140px; text-align: center; }
+
+  /* Calendar legend */
+  .cal-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 14px 0 6px; font-size: 11px; color: var(--text-mute); }
+  .cal-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── GSD pipeline ───────────────────────────────────────── */
+  .gsd-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-items: center; }
+  .gsd-step { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; position: relative; }
+  .gsd-step.pass    { border-color: rgba(16,185,129,0.4); background: linear-gradient(160deg, rgba(16,185,129,0.08), var(--surface-1)); }
+  .gsd-step.fail    { border-color: rgba(239,68,68,0.4); background: linear-gradient(160deg, rgba(239,68,68,0.08), var(--surface-1)); }
+  .gsd-step.run     { border-color: rgba(251,191,36,0.4); background: linear-gradient(160deg, rgba(251,191,36,0.08), var(--surface-1)); }
+  .gsd-step .label  { font-size: 10px; font-weight: 600; color: var(--text-mute); letter-spacing: 0.12em; text-transform: uppercase; }
+  .gsd-step .name   { font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .gsd-step .stat   { font-size: 11px; font-weight: 500; color: var(--text-mute); margin-top: 3px; }
+  .gsd-step .led    { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); }
+  .gsd-step.pass .led { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .gsd-step.fail .led { background: var(--red);   box-shadow: 0 0 8px var(--red); }
+  .gsd-step.run  .led { background: var(--amber); animation: pulse-amber 1.4s infinite; }
+  @keyframes pulse-amber {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; box-shadow: 0 0 10px var(--amber); }
+  }
+
+  /* ── County health ──────────────────────────────────────── */
+  .county-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); margin-bottom: 6px; }
+  .county-row.healthy   { border-left: 2px solid var(--green); }
+  .county-row.degraded  { border-left: 2px solid var(--amber); }
+  .county-row.offline   { border-left: 2px solid var(--red); }
+  .county-row.inactive  { opacity: 0.55; }
+  .county-name { font-size: 13px; font-weight: 600; }
+  .county-meta { font-size: 10px; color: var(--text-mute); margin-top: 1px; letter-spacing: 0.02em; }
+  .county-stat { font-size: 11px; color: var(--text-mute); text-align: right; }
+  .county-stat strong { color: var(--text); font-weight: 600; display: block; font-size: 13px; }
+
+  /* ── Run timeline ───────────────────────────────────────── */
+  table.runs { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.runs th { text-align: left; font-weight: 600; color: var(--text-mute); padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  table.runs td { padding: 11px 12px; border-bottom: 1px solid var(--border); }
+  table.runs tbody tr:hover { background: var(--surface-2); }
+  table.runs td.t-status { font-weight: 600; }
+  table.runs td.t-status.pass { color: var(--green); }
+  table.runs td.t-status.fail { color: var(--red); }
+  table.runs td.t-status.run  { color: var(--amber); }
+  table.runs td .row-meta { color: var(--text-mute); font-size: 11px; }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  footer { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-mute); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--text-mute); text-decoration: underline; text-decoration-color: var(--border-strong); transition: color 0.15s; }
+  footer a:hover { color: var(--orange); text-decoration-color: var(--orange); }
+
+  .skel { display: inline-block; height: 1em; min-width: 30px; background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%); background-size: 200% 100%; animation: skel 1.4s infinite; border-radius: 3px; }
+  @keyframes skel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ── HEADER ─────────────────────────────────────────── -->
+  <header>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>BidDeed.AI · Scraper Live</h1>
+        <p>Brevard County · Foreclosure + Tax Deed · realauction-compatible</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span id="status-pill" class="pill pill-live"><span class="pulse"></span><span id="status-text">CONNECTING</span></span>
+      <span class="clock-text">FL <strong id="clock-fl">—</strong> · IL <strong id="clock-il">—</strong></span>
+    </div>
+  </header>
+
+  <!-- ── KPI ROW ────────────────────────────────────────── -->
+  <section class="kpi-grid">
+    <div class="kpi" id="kpi-cases">
+      <div class="kpi-label"><span>Total Cases</span></div>
+      <div class="kpi-value mono" data-bind="cases_total"><span class="skel" style="width:80px"></span></div>
+      <div class="kpi-meta" data-bind="cases_meta">last 24h</div>
+    </div>
+    <div class="kpi" id="kpi-counties">
+      <div class="kpi-label"><span>Counties Active</span></div>
+      <div class="kpi-value mono" data-bind="counties_active"><span class="skel" style="width:60px"></span></div>
+      <div class="kpi-meta" data-bind="counties_meta">of 67 FL counties</div>
+    </div>
+    <div class="kpi" id="kpi-upserts">
+      <div class="kpi-label"><span>Upserts · 24h</span></div>
+      <div class="kpi-value mono" data-bind="upserts_24h"><span class="skel" style="width:90px"></span></div>
+      <div class="kpi-meta" data-bind="upserts_meta">silent-failure guard</div>
+    </div>
+    <div class="kpi" id="kpi-qa">
+      <div class="kpi-label"><span>QA Pass · 7d</span></div>
+      <div class="kpi-value mono" data-bind="qa_pass_pct"><span class="skel" style="width:60px"></span></div>
+      <div class="kpi-meta" data-bind="qa_meta">GSD validation</div>
+    </div>
+  </section>
+
+  <!-- ── CALENDAR + RIGHT RAIL ─────────────────────────── -->
+  <section class="main-grid">
+
+    <!-- CALENDAR (realauction framework) -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Auction Calendar</div>
+          <div class="card-title-meta">CALDAYBOX · click any day to drill</div>
+        </div>
+        <div class="cal-nav">
+          <button id="cal-prev" aria-label="previous month">‹</button>
+          <span class="cal-nav-label" id="cal-label">—</span>
+          <button id="cal-next" aria-label="next month">›</button>
+        </div>
+      </div>
+
+      <!-- realauction-compatible structure: .CALDAYBOX > .CALBOX[dayid] -->
+      <div class="CALDAYBOX" id="CALDAYBOX">
+        <div class="CALHEADER">Sun</div><div class="CALHEADER">Mon</div><div class="CALHEADER">Tue</div>
+        <div class="CALHEADER">Wed</div><div class="CALHEADER">Thu</div><div class="CALHEADER">Fri</div><div class="CALHEADER">Sat</div>
+      </div>
+
+      <div class="cal-legend">
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--orange)"></span>Scraped</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--amber)"></span>Partial</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--red)"></span>Failed</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--surface-3); border:1px solid var(--border-strong)"></span>No auction</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:transparent;border:2px solid var(--orange)"></span>Today</span>
+      </div>
+    </div>
+
+    <!-- RIGHT RAIL -->
+    <div>
+      <!-- GSD pipeline -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head">
+          <div>
+            <div class="card-title">GSD Pipeline · Live</div>
+            <div class="card-title-meta">Master → QA → Fix → Verified</div>
+          </div>
+          <span class="card-title-meta mono" id="gsd-cycle">cycle —</span>
+        </div>
+        <div class="gsd-flow" id="gsd-flow">
+          <div class="gsd-step pass"><div class="led"></div><div class="label">S1</div><div class="name">Scrape</div><div class="stat" data-bind="gsd_s1">—</div></div>
+          <div class="gsd-step pass"><div class="led"></div><div class="label">S2</div><div class="name">QA</div><div class="stat" data-bind="gsd_s2">—</div></div>
+          <div class="gsd-step"><div class="led"></div><div class="label">S3</div><div class="name">Fix</div><div class="stat" data-bind="gsd_s3">—</div></div>
+          <div class="gsd-step"><div class="led"></div><div class="label">S4</div><div class="name">Verify</div><div class="stat" data-bind="gsd_s4">—</div></div>
+        </div>
+      </div>
+
+      <!-- Per-county health -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Per-County Health</div>
+            <div class="card-title-meta">scrape_engine · last_success</div>
+          </div>
+          <span class="card-title-meta">top 8</span>
+        </div>
+        <div id="county-list">
+          <div class="county-row"><div><div class="county-name skel" style="width:80px"></div><div class="county-meta skel" style="width:120px"></div></div><div class="county-stat skel" style="width:50px"></div></div>
+          <div class="county-row"><div><div class="county-name skel" style="width:90px"></div><div class="county-meta skel" style="width:100px"></div></div><div class="county-stat skel" style="width:50px"></div></div>
+          <div class="county-row"><div><div class="county-name skel" style="width:70px"></div><div class="county-meta skel" style="width:130px"></div></div><div class="county-stat skel" style="width:50px"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── RECENT RUNS ───────────────────────────────────── -->
+  <section class="card" style="padding:0;">
+    <div class="card-head" style="padding:20px 20px 16px;">
+      <div>
+        <div class="card-title">Recent Scrape Runs</div>
+        <div class="card-title-meta">most recent first · auto-refresh 30s</div>
+      </div>
+      <div class="card-action">
+        <span id="last-refresh">—</span>
+        <button id="btn-refresh">Refresh</button>
+      </div>
+    </div>
+    <table class="runs" id="runs-table">
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>County · Source</th>
+          <th>Engine</th>
+          <th style="text-align:right;">Records</th>
+          <th style="text-align:right;">Resp ms</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="runs-tbody">
+        <tr><td colspan="6" style="text-align:center; color:var(--text-mute); padding:32px;"><span class="skel" style="width:240px;display:inline-block;"></span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────── -->
+  <footer>
+    <div>
+      <strong style="color:var(--text)">BidDeed.AI Scraper</strong> ·
+      Calendar framework: <span class="mono" style="color:var(--orange)">realauction-compatible</span> ·
+      GSD Session Isolation: <a href="https://github.com/breverdbidder/brevard-bidder-scraper/blob/main/docs/gsd_session_isolation.md">docs</a>
+    </div>
+    <div>
+      Data: <span class="mono" id="data-source">—</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+//──────────────────────────────────────────────────────────────────────────────
+// CONFIG — edge function endpoint.  Falls back to an embedded static manifest
+// if the function is unreachable so the page still renders meaningfully.
+//──────────────────────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://mocerqjnksmhcjzxrewo.supabase.co';
+const DATA_FN = SUPABASE_URL + '/functions/v1/scraper-dashboard-v3';
+const REFRESH_MS = 30_000;
+
+//──────────────────────────────────────────────────────────────────────────────
+// Clock (FL/IL dual)
+//──────────────────────────────────────────────────────────────────────────────
+function tick(){
+  const now = new Date();
+  const fl = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:true}).format(now);
+  const il = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Jerusalem',hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+  document.getElementById('clock-fl').textContent = fl;
+  document.getElementById('clock-il').textContent = il;
+}
+setInterval(tick, 30_000); tick();
+
+//──────────────────────────────────────────────────────────────────────────────
+// Calendar — realauction-compatible CALDAYBOX renderer
+//──────────────────────────────────────────────────────────────────────────────
+let calMonth = new Date().getMonth();
+let calYear  = new Date().getFullYear();
+let lastDataPayload = null;
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function pad2(n){ return String(n).padStart(2, '0'); }
+function fmtMDY(y, m, d){ return `${pad2(m+1)}/${pad2(d)}/${y}`; }
+
+function renderCalendar(){
+  const box = document.getElementById('CALDAYBOX');
+  // wipe day cells but keep headers
+  [...box.querySelectorAll('.CALBOX')].forEach(el => el.remove());
+
+  const label = document.getElementById('cal-label');
+  label.textContent = `${MONTHS[calMonth]} ${calYear}`;
+
+  const firstOfMonth = new Date(calYear, calMonth, 1);
+  const lastDayOfMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const startDow = firstOfMonth.getDay(); // 0=Sun
+
+  const today = new Date();
+  const todayStr = fmtMDY(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Calendar status map keyed by mm/dd/yyyy
+  const status = (lastDataPayload && lastDataPayload.calendar) || {};
+
+  // leading empty cells
+  for (let i = 0; i < startDow; i++){
+    const empty = document.createElement('div');
+    empty.className = 'CALBOX empty';
+    box.appendChild(empty);
+  }
+
+  for (let d = 1; d <= lastDayOfMonth; d++){
+    const dateObj = new Date(calYear, calMonth, d);
+    const dayid = fmtMDY(calYear, calMonth, d);
+    const dow = dateObj.getDay();
+    const cell = document.createElement('div');
+    cell.className = 'CALBOX';
+    cell.setAttribute('dayid', dayid);
+    if (dow === 0 || dow === 6) cell.classList.add('weekend');
+    if (dayid === todayStr) cell.classList.add('today');
+
+    const dayStatus = status[dayid];
+    if (dayStatus) {
+      cell.classList.add('has-auction');
+      cell.classList.add('scraped-' + dayStatus.state); // success | partial | failed
+    }
+
+    const dayNum = document.createElement('div');
+    dayNum.className = 'CAL-day-num';
+    dayNum.textContent = d;
+    cell.appendChild(dayNum);
+
+    const meta = document.createElement('div');
+    if (dayStatus){
+      meta.className = 'CAL-day-stat' + (dayStatus.cases ? '' : ' dim');
+      meta.textContent = dayStatus.cases ? `${dayStatus.cases} cases` : 'no cases';
+    } else {
+      meta.className = 'CAL-day-meta';
+      meta.textContent = '';
+    }
+    cell.appendChild(meta);
+
+    box.appendChild(cell);
+  }
+
+  // realauction-compatible click handler: same gotoday() pattern
+  box.querySelectorAll('.CALBOX[dayid]').forEach(el => {
+    el.addEventListener('click', e => gotoday(el));
+  });
+}
+
+function gotoday(obj){
+  const target = obj.getAttribute('dayid');
+  // Strip a previous CALSELT then set this cell as selected
+  document.querySelectorAll('.CALBOX.CALSELT').forEach(el => el.classList.remove('CALSELT'));
+  obj.classList.add('CALSELT');
+  // Mirror realauction URL pattern: AUCTIONDATE=mm/dd/yyyy. We hash-route inside
+  // this dashboard rather than navigating away — caller can wire up a deep link
+  // to an external case-detail page if/when that ships.
+  window.location.hash = `#AUCTIONDATE=${target}`;
+  console.info(`[CALBOX] gotoday → AUCTIONDATE=${target}`);
+}
+
+document.getElementById('cal-prev').addEventListener('click', () => {
+  if (--calMonth < 0){ calMonth = 11; calYear--; }
+  renderCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', () => {
+  if (++calMonth > 11){ calMonth = 0; calYear++; }
+  renderCalendar();
+});
+
+//──────────────────────────────────────────────────────────────────────────────
+// Data binding
+//──────────────────────────────────────────────────────────────────────────────
+function setBind(key, val){
+  document.querySelectorAll(`[data-bind="${key}"]`).forEach(el => {
+    el.innerHTML = val == null ? '—' : val;
+  });
+}
+
+function relTime(iso){
+  if (!iso) return 'never';
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60)    return Math.floor(diff) + 's ago';
+  if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function applyData(d){
+  lastDataPayload = d;
+
+  // KPIs
+  setBind('cases_total', d.cases_total != null ? d.cases_total.toLocaleString() : '—');
+  setBind('cases_meta', d.cases_meta || 'last 24h');
+  setBind('counties_active', d.counties_active ?? '—');
+  setBind('counties_meta', d.counties_meta || 'of 67 FL counties');
+  setBind('upserts_24h', d.upserts_24h != null ? d.upserts_24h.toLocaleString() : '—');
+  setBind('upserts_meta', d.upserts_meta || 'silent-failure guard');
+  setBind('qa_pass_pct', d.qa_pass_pct != null ? d.qa_pass_pct + '%' : '—');
+  setBind('qa_meta', d.qa_meta || 'GSD validation');
+
+  // KPI accent line
+  document.querySelectorAll('.kpi').forEach(el => el.classList.add('has-data'));
+
+  // GSD pipeline
+  const gsd = d.gsd || {};
+  setBind('gsd_s1', gsd.s1_label || '—');
+  setBind('gsd_s2', gsd.s2_label || '—');
+  setBind('gsd_s3', gsd.s3_label || 'idle');
+  setBind('gsd_s4', gsd.s4_label || 'pending');
+  document.getElementById('gsd-cycle').textContent = gsd.cycle ? `cycle ${gsd.cycle}` : '';
+  ['s1','s2','s3','s4'].forEach((s, i) => {
+    const el = document.querySelectorAll('.gsd-step')[i];
+    el.classList.remove('pass','fail','run');
+    const state = gsd[s + '_state'];
+    if (state) el.classList.add(state);
+  });
+
+  // Per-county
+  const cl = document.getElementById('county-list');
+  if (Array.isArray(d.counties)) {
+    cl.innerHTML = d.counties.map(c => `
+      <div class="county-row ${c.health}">
+        <div>
+          <div class="county-name">${c.county_slug}</div>
+          <div class="county-meta">${c.scrape_engine || '—'} · ${relTime(c.last_success)}</div>
+        </div>
+        <div class="county-stat">
+          <strong>${c.last_record_count ?? 0}</strong>
+          ${c.consecutive_failures ? `<span style="color:var(--red)">${c.consecutive_failures} fail</span>` : 'records'}
+        </div>
+      </div>`).join('');
+  }
+
+  // Recent runs
+  const tb = document.getElementById('runs-tbody');
+  if (Array.isArray(d.runs) && d.runs.length) {
+    tb.innerHTML = d.runs.map(r => `
+      <tr>
+        <td><span class="mono">${relTime(r.last_attempt)}</span><div class="row-meta">${r.last_attempt ? new Date(r.last_attempt).toLocaleString() : '—'}</div></td>
+        <td>${r.county_slug} <span class="row-meta">· ${r.source_type}</span></td>
+        <td><span class="mono">${r.scrape_engine || '—'}</span></td>
+        <td style="text-align:right;" class="mono">${(r.last_record_count ?? 0).toLocaleString()}</td>
+        <td style="text-align:right;" class="mono">${r.avg_response_ms ?? '—'}</td>
+        <td class="t-status ${r.is_healthy ? 'pass' : 'fail'}">${r.is_healthy ? 'OK' : 'FAIL'}</td>
+      </tr>`).join('');
+  } else {
+    tb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-mute);padding:24px;">No runs to show</td></tr>`;
+  }
+
+  // Status pill
+  const pill = document.getElementById('status-pill');
+  const text = document.getElementById('status-text');
+  pill.classList.remove('pill-live','pill-degraded','pill-failed');
+  if (d.health === 'healthy')      { pill.classList.add('pill-live');     text.textContent = 'LIVE'; }
+  else if (d.health === 'degraded'){ pill.classList.add('pill-degraded'); text.textContent = 'DEGRADED'; }
+  else                              { pill.classList.add('pill-failed');   text.textContent = 'OFFLINE'; }
+
+  // Footer / refresh stamp
+  document.getElementById('last-refresh').textContent = 'updated ' + new Date().toLocaleTimeString();
+  document.getElementById('data-source').textContent  = d._source || 'live';
+
+  renderCalendar();
+}
+
+async function load(){
+  try {
+    const resp = await fetch(DATA_FN, { headers: { 'Accept':'application/json' }, cache: 'no-store' });
+    if (!resp.ok) throw new Error('http ' + resp.status);
+    const data = await resp.json();
+    data._source = 'edge-fn';
+    applyData(data);
+  } catch (e) {
+    console.warn('[dashboard] live fetch failed, using fallback:', e.message);
+    // Minimal fallback so the page never looks broken
+    applyData({
+      _source: 'fallback',
+      health: 'degraded',
+      cases_total: null, counties_active: null, upserts_24h: null, qa_pass_pct: null,
+      cases_meta: 'edge-fn unreachable',
+      gsd: { cycle:'—', s1_label:'—', s2_label:'—', s3_label:'—', s4_label:'—' },
+      counties: [],
+      runs: [],
+      calendar: {}
+    });
+  }
+}
+
+document.getElementById('btn-refresh').addEventListener('click', load);
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
