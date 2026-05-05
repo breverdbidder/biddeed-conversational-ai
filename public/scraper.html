@@ -227,6 +227,84 @@
 
   .skel { display: inline-block; height: 1em; min-width: 30px; background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%); background-size: 200% 100%; animation: skel 1.4s infinite; border-radius: 3px; }
   @keyframes skel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── AUCTION_ITEMS panel (realauction-compatible #Area_W .AUCTION_ITEM) ─── */
+  #Area_W { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  @media (max-width: 540px) { #Area_W { grid-template-columns: 1fr; } }
+
+  .AUCTION_ITEM {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 12px;
+    align-items: start;
+    transition: border-color 0.15s ease, transform 0.12s ease;
+    position: relative;
+  }
+  .AUCTION_ITEM:hover { border-color: var(--orange); transform: translateY(-1px); }
+  .AUCTION_ITEM .ai-photo {
+    width: 44px; height: 44px; border-radius: 8px;
+    background: var(--surface-3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim); flex-shrink: 0;
+    overflow: hidden;
+  }
+  .AUCTION_ITEM .ai-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .AUCTION_ITEM .ai-photo svg { stroke: var(--text-dim); }
+  .AUCTION_ITEM .ai-body { min-width: 0; }
+  .AUCTION_ITEM .ai-header {
+    display: flex; gap: 8px; align-items: center;
+    font-size: 11px; margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .AUCTION_ITEM .ai-case { color: var(--orange); font-weight: 600; letter-spacing: 0.01em; }
+  .AUCTION_ITEM .ai-county-badge {
+    background: var(--navy); color: var(--text);
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 4px;
+    border: 1px solid rgba(245,158,11,0.18);
+  }
+  .AUCTION_ITEM .ai-sale-type {
+    font-size: 9px; color: var(--text-mute); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .AUCTION_ITEM .ai-address {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    line-height: 1.3;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    margin-bottom: 6px;
+  }
+  .AUCTION_ITEM .ai-address.dim { color: var(--text-mute); font-style: italic; font-weight: 500; }
+  .AUCTION_ITEM .ai-meta {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    font-size: 11px; color: var(--text-mute);
+    line-height: 1.4;
+  }
+  .AUCTION_ITEM .ai-meta strong { color: var(--text); font-weight: 600; }
+  .AUCTION_ITEM .ai-meta .judgment { color: var(--orange); font-weight: 600; }
+  .AUCTION_ITEM .ai-link {
+    color: var(--text-dim); padding: 2px 4px; transition: color 0.15s;
+    align-self: start;
+  }
+  .AUCTION_ITEM .ai-link:hover { color: var(--orange); }
+
+  .ai-toolbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 4px 0 16px; font-size: 11px;
+  }
+  .ai-county-chip {
+    background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text-mute); font-size: 10px; font-weight: 600;
+    padding: 4px 9px; border-radius: 999px; cursor: pointer;
+    transition: all 0.12s; letter-spacing: 0.04em;
+  }
+  .ai-county-chip:hover { border-color: var(--orange); color: var(--text); }
+  .ai-county-chip.active { background: var(--orange); border-color: var(--orange); color: var(--bg); }
+  .ai-county-chip.all { font-weight: 700; }
+  .ai-empty { padding: 32px; text-align: center; color: var(--text-mute); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -343,6 +421,21 @@
       </div>
     </div>
 
+  </section>
+
+  <!-- ── AUCTION_ITEMS · day-detail (realauction #Area_W mirror) ─────── -->
+  <section class="card" style="margin-bottom:28px;">
+    <div class="card-head">
+      <div>
+        <div class="card-title">Auction Items · <span id="ai-date">today</span></div>
+        <div class="card-title-meta" id="ai-summary">click any calendar day to drill</div>
+      </div>
+      <div class="card-action">
+        <span id="ai-loading" class="card-title-meta" style="display:none;">loading…</span>
+      </div>
+    </div>
+    <div class="ai-toolbar" id="ai-toolbar"></div>
+    <div id="Area_W"><div class="ai-empty">Pick a day from the calendar above to load auction items.</div></div>
   </section>
 
   <!-- ── RECENT RUNS ───────────────────────────────────── -->
@@ -491,11 +584,150 @@ function gotoday(obj){
   // Strip a previous CALSELT then set this cell as selected
   document.querySelectorAll('.CALBOX.CALSELT').forEach(el => el.classList.remove('CALSELT'));
   obj.classList.add('CALSELT');
-  // Mirror realauction URL pattern: AUCTIONDATE=mm/dd/yyyy. We hash-route inside
-  // this dashboard rather than navigating away — caller can wire up a deep link
-  // to an external case-detail page if/when that ships.
+  // Mirror realauction URL pattern: AUCTIONDATE=mm/dd/yyyy
   window.location.hash = `#AUCTIONDATE=${target}`;
   console.info(`[CALBOX] gotoday → AUCTIONDATE=${target}`);
+  loadDayProperties(target);
+}
+
+//──────────────────────────────────────────────────────────────────────────────
+// AUCTION_ITEM panel — realauction-compatible #Area_W rendering
+//──────────────────────────────────────────────────────────────────────────────
+const DAY_FN = SUPABASE_URL + '/functions/v1/scraper-day-properties-v1';
+let lastDayItems = [];        // last fetched items (for re-filter)
+let activeCountyFilter = '';  // '' = all
+
+function fmtUSD(n){
+  if (n == null) return '—';
+  const v = Number(n);
+  if (!isFinite(v)) return '—';
+  if (v >= 1_000_000) return '$' + (v/1_000_000).toFixed(2) + 'M';
+  if (v >= 1_000)     return '$' + Math.round(v).toLocaleString();
+  return '$' + v.toFixed(0);
+}
+
+function escapeHtml(s){
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderAuctionItems(items){
+  const Area = document.getElementById('Area_W');
+  const filtered = activeCountyFilter
+    ? items.filter(it => it.county === activeCountyFilter)
+    : items;
+
+  if (!filtered.length){
+    Area.innerHTML = `<div class="ai-empty">No auction items for this date${activeCountyFilter ? ` in ${activeCountyFilter}` : ''}.</div>`;
+    return;
+  }
+
+  Area.innerHTML = filtered.map(it => {
+    const addr = it.property_address || '— address pending —';
+    const addrCls = it.property_address ? 'ai-address' : 'ai-address dim';
+    const photo = it.photo_url
+      ? `<img src="${escapeHtml(it.photo_url)}" alt="" loading="lazy" onerror="this.style.display='none'">`
+      : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>`;
+    const link = it.auction_url || it.bcpao_url;
+    const linkHtml = link
+      ? `<a class="ai-link" href="${escapeHtml(link)}" target="_blank" rel="noopener" title="open source">↗</a>`
+      : '<span></span>';
+    const metaParts = [];
+    if (it.judgment_amount != null) metaParts.push(`<span class="judgment">Judgment: ${fmtUSD(it.judgment_amount)}</span>`);
+    if (it.opening_bid != null)     metaParts.push(`<span>Opening: <strong>${fmtUSD(it.opening_bid)}</strong></span>`);
+    if (it.assessed_value != null)  metaParts.push(`<span>Assessed: ${fmtUSD(it.assessed_value)}</span>`);
+    if (it.beds || it.baths || it.sqft){
+      const bbs = [
+        it.beds ? `${it.beds}bd` : null,
+        it.baths ? `${it.baths}ba` : null,
+        it.sqft ? `${it.sqft.toLocaleString()}sf` : null,
+      ].filter(Boolean).join(' · ');
+      if (bbs) metaParts.push(`<span class="mono">${bbs}</span>`);
+    }
+    if (it.parcel_id) metaParts.push(`<span class="mono">parcel ${escapeHtml(it.parcel_id)}</span>`);
+    if (it.plaintiff)  metaParts.push(`<span>vs <strong>${escapeHtml(it.plaintiff).slice(0, 40)}</strong></span>`);
+
+    return `
+      <div class="AUCTION_ITEM" data-county="${escapeHtml(it.county || '')}">
+        <div class="ai-photo">${photo}</div>
+        <div class="ai-body">
+          <div class="ai-header">
+            <span class="ai-case mono">${escapeHtml(it.case_number || '—')}</span>
+            <span class="ai-county-badge">${escapeHtml(it.county || '?')}</span>
+            ${it.sale_type ? `<span class="ai-sale-type">${escapeHtml(it.sale_type)}</span>` : ''}
+          </div>
+          <div class="${addrCls}">${escapeHtml(addr)}</div>
+          <div class="ai-meta">${metaParts.join('')}</div>
+        </div>
+        ${linkHtml}
+      </div>`;
+  }).join('');
+}
+
+function renderCountyChips(byCounty){
+  const tb = document.getElementById('ai-toolbar');
+  if (!byCounty || !Object.keys(byCounty).length){ tb.innerHTML = ''; return; }
+  const entries = Object.entries(byCounty).sort((a,b) => b[1] - a[1]);
+  const total = entries.reduce((s, [,n]) => s + n, 0);
+  const chips = [
+    `<span class="ai-county-chip all ${activeCountyFilter === '' ? 'active' : ''}" data-county="">all · ${total}</span>`,
+    ...entries.map(([c, n]) =>
+      `<span class="ai-county-chip ${activeCountyFilter === c ? 'active' : ''}" data-county="${escapeHtml(c)}">${escapeHtml(c)} · ${n}</span>`
+    ),
+  ];
+  tb.innerHTML = chips.join('');
+  tb.querySelectorAll('.ai-county-chip').forEach(el => {
+    el.addEventListener('click', () => {
+      activeCountyFilter = el.getAttribute('data-county') || '';
+      tb.querySelectorAll('.ai-county-chip').forEach(c => c.classList.toggle(
+        'active',
+        c.getAttribute('data-county') === activeCountyFilter
+      ));
+      renderAuctionItems(lastDayItems);
+    });
+  });
+}
+
+async function loadDayProperties(mdy){
+  document.getElementById('ai-date').textContent = mdy;
+  document.getElementById('ai-loading').style.display = '';
+  document.getElementById('Area_W').innerHTML = `<div class="ai-empty">Loading auction items for ${escapeHtml(mdy)}…</div>`;
+  document.getElementById('ai-toolbar').innerHTML = '';
+  activeCountyFilter = '';
+  try {
+    const resp = await fetch(`${DAY_FN}?date=${encodeURIComponent(mdy)}`, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('http ' + resp.status);
+    const data = await resp.json();
+    lastDayItems = data.items || [];
+    document.getElementById('ai-summary').textContent =
+      `${data.total} item${data.total === 1 ? '' : 's'} across ${Object.keys(data.counties || {}).length} count${Object.keys(data.counties || {}).length === 1 ? 'y' : 'ies'}`;
+    renderCountyChips(data.counties || {});
+    renderAuctionItems(lastDayItems);
+  } catch (e) {
+    console.warn('[day-properties] fetch failed:', e.message);
+    document.getElementById('Area_W').innerHTML =
+      `<div class="ai-empty">Unable to load auction items: ${escapeHtml(e.message)}.</div>`;
+    document.getElementById('ai-summary').textContent = 'fetch failed';
+  } finally {
+    document.getElementById('ai-loading').style.display = 'none';
+  }
+}
+
+// On initial load, auto-fetch today's items if today is in the calendar
+function initialDayLoad(){
+  const t = new Date();
+  const todayMDY = fmtMDY(t.getFullYear(), t.getMonth(), t.getDate());
+  // Check if URL hash has an explicit AUCTIONDATE
+  const hashMatch = (window.location.hash || '').match(/AUCTIONDATE=(\d{2}\/\d{2}\/\d{4})/);
+  const target = hashMatch ? hashMatch[1] : todayMDY;
+  loadDayProperties(target);
+  // Mark the matching cell as selected if visible
+  setTimeout(() => {
+    const cell = document.querySelector(`.CALBOX[dayid="${target}"]`);
+    if (cell) cell.classList.add('CALSELT');
+  }, 50);
 }
 
 document.getElementById('cal-prev').addEventListener('click', () => {
@@ -626,7 +858,7 @@ async function load(){
 }
 
 document.getElementById('btn-refresh').addEventListener('click', load);
-load();
+load().then(() => initialDayLoad());
 setInterval(load, REFRESH_MS);
 </script>
 </body>
