@@ -710,6 +710,44 @@ const DAY_FN = SUPABASE_URL + '/functions/v1/scraper-day-properties-v1';
 let lastDayItems = [];        // last fetched items (for re-filter)
 let activeCountyFilter = '';  // '' = all
 
+// Direct property-appraiser URL patterns for top FL counties.
+// For unmapped counties we fall back to a Google search — always functional.
+const DIRECT_PA_URLS = {
+  brevard:      id => `https://www.bcpao.us/PropertySearch/#/parcel/${id}`,
+  miami_dade:   id => `https://www8.miamidade.gov/Apps/PA/PropertySearch/#/?folio=${id}`,
+  palm_beach:   id => `https://www.pbcpao.gov/Property/Details?parcelId=${id}`,
+  orange:       id => `https://www.ocpafl.org/searches/parcelsearch.aspx?pid=${id}`,
+  hillsborough: id => `https://gis.hcpafl.org/propertysearch/#/nav/Search?folio=${id}`,
+  lee:          id => `https://www.leepa.org/Display/DisplayParcel.aspx?FolioID=${id}`,
+  duval:        id => `https://paopropertysearch.coj.net/Basic/Detail.aspx?RE=${id}`,
+  volusia:      id => `https://vcpa.vcgov.org/parcel.aspx?p=${id}`,
+  pinellas:     id => `https://www.pcpao.gov/query.php?q=${id}`,
+  polk:         id => `https://www.polkpa.org/CamaDisplay.aspx?OutputMode=Display&SearchType=RealEstate&Parcel=${id}`,
+  pasco:        id => `https://search.pascopa.com/parcel/?parcel=${id}`,
+  manatee:      id => `https://www.manateepao.gov/parcel/?parid=${id}`,
+  sarasota:     id => `https://www.sc-pa.com/propertysearch/parcel/details/${id}`,
+  seminole:     id => `https://www.scpafl.org/ParcelDetails?parcel=${id}`,
+  collier:      id => `https://www.collierappraiser.com/main_search/Recorddetail.html?Map=No&FolioNum=${id}`,
+  marion:       id => `https://www.pa.marion.fl.us/PropertySearch.aspx?Parcel=${id}`,
+  alachua:      id => `https://qpublic.schneidercorp.com/Application.aspx?AppID=696&LayerID=12834&PageTypeID=4&KeyValue=${id}`,
+  st_lucie:     id => `https://www.paslc.gov/property-detail?accountnum=${id}`,
+  charlotte:    id => `https://www.ccappraiser.com/Show_parcel.asp?acct=${id}`,
+  escambia:     id => `https://www.escpa.org/cama/Detail_a.aspx?s=${id}`,
+};
+
+function propertyAppraiserUrl(county, parcelId) {
+  if (!parcelId) return null;
+  if (county && DIRECT_PA_URLS[county]) return DIRECT_PA_URLS[county](parcelId);
+  // Universal fallback — Google search lands on the correct PA page within 1 click
+  const countyDisplay = (county || 'florida').replace(/_/g, ' ');
+  const q = `${countyDisplay} county FL property appraiser parcel ${parcelId}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+}
+
+function paLinkLabel(county) {
+  return DIRECT_PA_URLS[county] ? 'Property Appraiser' : 'Find on Property Appraiser';
+}
+
 function fmtUSD(n){
   if (n == null) return '—';
   const v = Number(n);
@@ -744,11 +782,13 @@ function renderAuctionItems(items){
       ? `<img src="${escapeHtml(it.photo_url)}" alt="" loading="lazy" onerror="this.style.display='none'">`
       : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>`;
 
-    // Multi-icon link row — separate icons for PA, Clerk, Auction Source
+    // Multi-icon link row — separate icons for PA, Clerk, Auction Source.
+    // PA always shown via algorithmic URL builder if real bcpao_url missing.
     const linkIcons = [];
-    if (it.bcpao_url) linkIcons.push(`
-      <a class="ai-link-icon" data-kind="pa" href="${escapeHtml(it.bcpao_url)}"
-         target="_blank" rel="noopener" title="Property Appraiser" onclick="event.stopPropagation()">
+    const paUrl = it.bcpao_url || propertyAppraiserUrl(it.county, it.parcel_id);
+    if (paUrl) linkIcons.push(`
+      <a class="ai-link-icon" data-kind="pa" href="${escapeHtml(paUrl)}"
+         target="_blank" rel="noopener" title="${escapeHtml(paLinkLabel(it.county))}" onclick="event.stopPropagation()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>
       </a>`);
     if (it.auction_url) linkIcons.push(`
@@ -1074,15 +1114,18 @@ async function openLotModal(lotId){
   if (oi && oi.is_homestead) pills.push(`<span class="modal-pill warn">homestead</span>`);
   if (oi && oi.is_out_of_state) pills.push(`<span class="modal-pill">out-of-state owner</span>`);
 
-  // External link buttons — Property Appraiser is primary if present
-  const paLink = (parcel && parcel.pa_link) || lot.links?.bcpao || null;
+  // External link buttons — Property Appraiser is primary; falls back to
+  // algorithmic URL builder so EVERY lot has a working PA link
+  const directPa = (parcel && parcel.pa_link) || lot.links?.bcpao || null;
+  const paLink = directPa || propertyAppraiserUrl(lot.county, lot.parcel_id);
+  const paLabel = directPa ? 'Property Appraiser' : paLinkLabel(lot.county);
   const clerkLink = lot.links?.clerk || null;
   const auctionLink = lot.links?.auction || lot.links?.realforeclose || lot.links?.acclaimweb || null;
   const linkBtns = [];
   if (paLink) linkBtns.push(`
     <a class="modal-action-btn primary" href="${escapeHtml(paLink)}" target="_blank" rel="noopener">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>
-      Property Appraiser
+      ${escapeHtml(paLabel)}
     </a>`);
   if (clerkLink) linkBtns.push(`
     <a class="modal-action-btn" href="${escapeHtml(clerkLink)}" target="_blank" rel="noopener">
