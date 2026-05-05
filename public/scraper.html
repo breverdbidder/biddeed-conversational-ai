@@ -305,6 +305,119 @@
   .ai-county-chip.active { background: var(--orange); border-color: var(--orange); color: var(--bg); }
   .ai-county-chip.all { font-weight: 700; }
   .ai-empty { padding: 32px; text-align: center; color: var(--text-mute); font-size: 13px; }
+
+  /* AUCTION_ITEM card — multi-icon link row */
+  .AUCTION_ITEM .ai-links { display: inline-flex; gap: 6px; align-self: start; }
+  .AUCTION_ITEM .ai-link-icon {
+    width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-dim); border: 1px solid var(--border); border-radius: 6px;
+    background: var(--surface-1); transition: all 0.12s;
+  }
+  .AUCTION_ITEM .ai-link-icon:hover { color: var(--orange); border-color: var(--orange); background: var(--surface-2); }
+  .AUCTION_ITEM .ai-link-icon[data-kind="pa"]:hover     { color: var(--orange); }
+  .AUCTION_ITEM .ai-link-icon[data-kind="clerk"]:hover  { color: var(--orange); }
+  .AUCTION_ITEM .ai-link-icon[data-kind="auction"]:hover { color: var(--orange); }
+  .AUCTION_ITEM { cursor: pointer; }
+
+  /* ── Modal — lot detail ───────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(2,6,23,0.82);
+    backdrop-filter: blur(6px);
+    z-index: 50; display: none; align-items: flex-start; justify-content: center;
+    overflow-y: auto; padding: 32px 16px; animation: fadeIn 0.18s ease;
+  }
+  .modal-overlay.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-panel {
+    background: var(--surface-1); border: 1px solid var(--border-strong);
+    border-radius: 14px; max-width: 960px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.08);
+    animation: slideUp 0.24s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px; border-bottom: 1px solid var(--border);
+  }
+  .modal-head .case { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--orange); font-size: 14px; }
+  .modal-close {
+    background: transparent; border: 1px solid var(--border-strong); color: var(--text-mute);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--orange); }
+
+  .modal-hero {
+    display: grid; grid-template-columns: 240px 1fr; gap: 22px;
+    padding: 22px;
+  }
+  @media (max-width: 720px) { .modal-hero { grid-template-columns: 1fr; } }
+  .modal-hero-photo {
+    aspect-ratio: 4/3; border-radius: 10px; overflow: hidden;
+    background: var(--surface-2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim);
+  }
+  .modal-hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-title { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .modal-subtitle { font-size: 13px; color: var(--text-mute); margin-bottom: 14px; }
+  .modal-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .modal-pill {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text);
+  }
+  .modal-pill.county { background: var(--navy); }
+  .modal-pill.classification { background: rgba(245,158,11,0.12); color: var(--orange); border-color: rgba(245,158,11,0.3); }
+  .modal-pill.warn { background: rgba(239,68,68,0.12); color: var(--red); border-color: rgba(239,68,68,0.3); }
+
+  .modal-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    padding: 0 22px 18px;
+  }
+  @media (max-width: 720px) { .modal-stats { grid-template-columns: repeat(2, 1fr); } }
+  .modal-stat {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .modal-stat-label { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; color: var(--text-mute); text-transform: uppercase; margin-bottom: 4px; }
+  .modal-stat-value { font-size: 18px; font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+  .modal-stat-value.dim { color: var(--text-dim); font-weight: 500; }
+
+  .modal-actions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 0 22px 22px;
+  }
+  .modal-action-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text);
+    transition: all 0.15s;
+  }
+  .modal-action-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .modal-action-btn.primary { background: var(--orange); color: var(--bg); border-color: var(--orange); }
+  .modal-action-btn.primary:hover { background: #FBBF24; color: var(--bg); }
+  .modal-action-btn svg { flex-shrink: 0; }
+
+  .modal-section { padding: 18px 22px; border-top: 1px solid var(--border); }
+  .modal-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; color: var(--text-mute);
+    text-transform: uppercase; margin-bottom: 12px; display: flex; gap: 10px; align-items: center;
+  }
+  .modal-section-title .badge {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--surface-3); color: var(--text-mute); letter-spacing: 0.06em;
+  }
+  .modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 22px; }
+  @media (max-width: 720px) { .modal-grid { grid-template-columns: repeat(2, 1fr); } }
+  .modal-kv { display: flex; flex-direction: column; gap: 2px; }
+  .modal-kv-label { font-size: 10px; font-weight: 600; color: var(--text-mute); letter-spacing: 0.06em; text-transform: uppercase; }
+  .modal-kv-value { font-size: 13px; color: var(--text); font-weight: 500; }
+  .modal-kv-value.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .modal-kv-value.muted { color: var(--text-dim); font-style: italic; }
 </style>
 </head>
 <body>
@@ -630,10 +743,20 @@ function renderAuctionItems(items){
     const photo = it.photo_url
       ? `<img src="${escapeHtml(it.photo_url)}" alt="" loading="lazy" onerror="this.style.display='none'">`
       : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>`;
-    const link = it.auction_url || it.bcpao_url;
-    const linkHtml = link
-      ? `<a class="ai-link" href="${escapeHtml(link)}" target="_blank" rel="noopener" title="open source">↗</a>`
-      : '<span></span>';
+
+    // Multi-icon link row — separate icons for PA, Clerk, Auction Source
+    const linkIcons = [];
+    if (it.bcpao_url) linkIcons.push(`
+      <a class="ai-link-icon" data-kind="pa" href="${escapeHtml(it.bcpao_url)}"
+         target="_blank" rel="noopener" title="Property Appraiser" onclick="event.stopPropagation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>
+      </a>`);
+    if (it.auction_url) linkIcons.push(`
+      <a class="ai-link-icon" data-kind="auction" href="${escapeHtml(it.auction_url)}"
+         target="_blank" rel="noopener" title="Auction Source" onclick="event.stopPropagation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7M21 3l-9 9M5 9v12h12M9 5h12"/></svg>
+      </a>`);
+
     const metaParts = [];
     if (it.judgment_amount != null) metaParts.push(`<span class="judgment">Judgment: ${fmtUSD(it.judgment_amount)}</span>`);
     if (it.opening_bid != null)     metaParts.push(`<span>Opening: <strong>${fmtUSD(it.opening_bid)}</strong></span>`);
@@ -650,7 +773,7 @@ function renderAuctionItems(items){
     if (it.plaintiff)  metaParts.push(`<span>vs <strong>${escapeHtml(it.plaintiff).slice(0, 40)}</strong></span>`);
 
     return `
-      <div class="AUCTION_ITEM" data-county="${escapeHtml(it.county || '')}">
+      <div class="AUCTION_ITEM" data-county="${escapeHtml(it.county || '')}" data-lot-id="${escapeHtml(it.id)}">
         <div class="ai-photo">${photo}</div>
         <div class="ai-body">
           <div class="ai-header">
@@ -661,9 +784,17 @@ function renderAuctionItems(items){
           <div class="${addrCls}">${escapeHtml(addr)}</div>
           <div class="ai-meta">${metaParts.join('')}</div>
         </div>
-        ${linkHtml}
+        <div class="ai-links">${linkIcons.join('')}</div>
       </div>`;
   }).join('');
+
+  // Wire card click → open modal (link icons stop propagation themselves)
+  Area.querySelectorAll('.AUCTION_ITEM').forEach(card => {
+    card.addEventListener('click', () => {
+      const lotId = card.getAttribute('data-lot-id');
+      if (lotId) openLotModal(lotId);
+    });
+  });
 }
 
 function renderCountyChips(byCounty){
@@ -860,6 +991,263 @@ async function load(){
 document.getElementById('btn-refresh').addEventListener('click', load);
 load().then(() => initialDayLoad());
 setInterval(load, REFRESH_MS);
+
+//──────────────────────────────────────────────────────────────────────────────
+// Lot detail modal — full lot + parcel (zw_parcels) + owner_intel join
+//──────────────────────────────────────────────────────────────────────────────
+const LOT_DETAIL_FN = SUPABASE_URL + '/functions/v1/scraper-lot-detail-v1';
+
+function closeLotModal(){
+  const m = document.getElementById('lot-modal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+}
+
+// Wire modal listeners after the modal HTML is in the DOM (it sits below this
+// script in document order, so wait for DOMContentLoaded — or run immediately
+// if the document is already parsed).
+function wireModalListeners(){
+  const closeBtn = document.getElementById('lm-close');
+  const overlay  = document.getElementById('lot-modal');
+  if (!closeBtn || !overlay) return;
+  closeBtn.addEventListener('click', e => { e.stopPropagation(); closeLotModal(); });
+  overlay.addEventListener('click', closeLotModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLotModal(); });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', wireModalListeners);
+} else {
+  wireModalListeners();
+}
+
+function fmtDate(s){
+  if (!s) return null;
+  try { return new Date(s).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }); }
+  catch { return s; }
+}
+
+function modalRow(label, value, opts){
+  if (value == null || value === '' || value === '—') return '';
+  const cls = (opts && opts.mono) ? 'modal-kv-value mono' : 'modal-kv-value';
+  return `
+    <div class="modal-kv">
+      <div class="modal-kv-label">${escapeHtml(label)}</div>
+      <div class="${cls}">${typeof value === 'string' ? escapeHtml(value) : value}</div>
+    </div>`;
+}
+
+async function openLotModal(lotId){
+  const modal = document.getElementById('lot-modal');
+  const body = document.getElementById('lm-body');
+  document.getElementById('lm-case').textContent = 'Loading…';
+  body.innerHTML = '<div class="ai-empty">Fetching lot detail…</div>';
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  let detail;
+  try {
+    const resp = await fetch(`${LOT_DETAIL_FN}?id=${encodeURIComponent(lotId)}`, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('http ' + resp.status);
+    detail = await resp.json();
+  } catch (e) {
+    body.innerHTML = `<div class="ai-empty">Unable to load lot detail: ${escapeHtml(e.message)}</div>`;
+    return;
+  }
+
+  const lot = detail.lot || {};
+  const parcel = detail.parcel || null;
+  const oi = detail.owner_intel || null;
+
+  document.getElementById('lm-case').textContent = lot.case_number || lotId.slice(0, 8);
+
+  const photoUrl = lot.photo_url || (parcel && parcel.photo_url) || null;
+  const heroPhoto = photoUrl
+    ? `<img src="${escapeHtml(photoUrl)}" alt="" onerror="this.parentElement.innerHTML='<svg width=\\'40\\' height=\\'40\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.6\\'><path d=\\'M3 21h18\\'/><path d=\\'M5 21V11l7-7 7 7v10\\'/></svg>'">`
+    : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>`;
+
+  const pills = [];
+  if (lot.county) pills.push(`<span class="modal-pill county">${escapeHtml(lot.county)}</span>`);
+  if (lot.sale_type) pills.push(`<span class="modal-pill">${escapeHtml(lot.sale_type)}</span>`);
+  if (lot.auction_status) pills.push(`<span class="modal-pill">${escapeHtml(lot.auction_status)}</span>`);
+  if (oi && oi.classification) pills.push(`<span class="modal-pill classification">${escapeHtml(oi.classification)}</span>`);
+  if (oi && oi.is_homestead) pills.push(`<span class="modal-pill warn">homestead</span>`);
+  if (oi && oi.is_out_of_state) pills.push(`<span class="modal-pill">out-of-state owner</span>`);
+
+  // External link buttons — Property Appraiser is primary if present
+  const paLink = (parcel && parcel.pa_link) || lot.links?.bcpao || null;
+  const clerkLink = lot.links?.clerk || null;
+  const auctionLink = lot.links?.auction || lot.links?.realforeclose || lot.links?.acclaimweb || null;
+  const linkBtns = [];
+  if (paLink) linkBtns.push(`
+    <a class="modal-action-btn primary" href="${escapeHtml(paLink)}" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V11l7-7 7 7v10"/><path d="M9 21v-6h6v6"/></svg>
+      Property Appraiser
+    </a>`);
+  if (clerkLink) linkBtns.push(`
+    <a class="modal-action-btn" href="${escapeHtml(clerkLink)}" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+      Clerk Records
+    </a>`);
+  if (auctionLink) linkBtns.push(`
+    <a class="modal-action-btn" href="${escapeHtml(auctionLink)}" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7M21 3l-9 9M5 9v12h12"/></svg>
+      Auction Listing
+    </a>`);
+  if (!linkBtns.length) linkBtns.push(`<span class="card-title-meta">No external links available for this lot.</span>`);
+
+  // Quick stats
+  const stats = [
+    { label: 'Judgment',  value: lot.judgment_amount != null ? fmtUSD(lot.judgment_amount) : '—' },
+    { label: 'Opening',   value: lot.opening_bid != null ? fmtUSD(lot.opening_bid) : '—' },
+    { label: 'Assessed',  value: (lot.assessed_value || (parcel && parcel.val_assessed)) != null ? fmtUSD(lot.assessed_value || parcel.val_assessed) : '—' },
+    { label: 'Market',    value: (lot.market_value || (parcel && parcel.val_market)) != null ? fmtUSD(lot.market_value || parcel.val_market) : '—' },
+  ];
+
+  // Property details
+  const beds = lot.beds || (parcel && parcel.beds);
+  const baths = lot.baths || (parcel && (parcel.baths_full + (parcel.baths_half || 0) * 0.5));
+  const sqft = lot.sqft || (parcel && (parcel.sqft_heated || parcel.sqft_total));
+  const yearBuilt = lot.year_built || (parcel && parcel.year_built);
+  const lotSize = lot.lot_size || (parcel && parcel.acres_gis);
+  const propRows = [
+    modalRow('Address', lot.property_address || (parcel && parcel.site_addr)),
+    modalRow('City / Zip', [lot.city || (parcel && parcel.site_city), lot.zip || (parcel && parcel.site_zip)].filter(Boolean).join(', ') || null),
+    modalRow('Parcel ID', lot.parcel_id, { mono: true }),
+    modalRow('Subdivision', parcel && parcel.subdivision),
+    modalRow('Beds', beds),
+    modalRow('Baths', baths),
+    modalRow('Sqft', sqft ? sqft.toLocaleString() : null),
+    modalRow('Year built', yearBuilt),
+    modalRow('Lot size', lotSize ? `${lotSize} ${parcel && parcel.acres_gis ? 'acres' : 'sqft'}` : null),
+    modalRow('Auction date', fmtDate(lot.auction_date)),
+    modalRow('Plaintiff', lot.plaintiff),
+    modalRow('Cert holder', lot.cert_holder),
+  ].filter(Boolean).join('');
+
+  // Zoning section (Brevard only — only when parcel is present)
+  let zoningHtml = '';
+  if (parcel && (parcel.zoning_code || parcel.luse_code)) {
+    const permittedUses = parcel.zoning_permitted
+      ? (Array.isArray(parcel.zoning_permitted) ? parcel.zoning_permitted.join(', ') : (typeof parcel.zoning_permitted === 'object' ? JSON.stringify(parcel.zoning_permitted) : parcel.zoning_permitted))
+      : null;
+    const zRows = [
+      modalRow('Zoning code', parcel.zoning_code, { mono: true }),
+      modalRow('Zoning class', parcel.zoning_desc),
+      modalRow('Category', parcel.zoning_category),
+      modalRow('Jurisdiction', parcel.zoning_jurisdiction),
+      modalRow('Land use', parcel.luse_desc || parcel.luse_code),
+      modalRow('Future land use', parcel.flu_desc || parcel.flu_code),
+      modalRow('Max height', parcel.zoning_max_ht ? `${parcel.zoning_max_ht} ft` : null),
+      modalRow('Min lot', parcel.zoning_min_lot),
+      modalRow('Setbacks', parcel.zoning_setbacks),
+      modalRow('Permitted uses', permittedUses),
+      modalRow('Flood zone', parcel.flood_zone),
+    ].filter(Boolean).join('');
+    if (zRows) {
+      zoningHtml = `
+        <div class="modal-section">
+          <div class="modal-section-title">Zoning <span class="badge">ZoneWise · Brevard</span></div>
+          <div class="modal-grid">${zRows}</div>
+        </div>`;
+    }
+  }
+
+  // Owner section
+  let ownerHtml = '';
+  const ownerName = (parcel && parcel.owner_name) || (oi && oi.defendant);
+  if (ownerName || oi) {
+    const oRows = [
+      modalRow('Owner / defendant', ownerName),
+      modalRow('Mailing address', parcel && [parcel.owner_addr1, parcel.owner_city, parcel.owner_state].filter(Boolean).join(', ')),
+      modalRow('Classification', oi && oi.classification),
+      modalRow('Confidence', oi && oi.confidence_score != null ? `${Math.round(oi.confidence_score * 100)}%` : null),
+      modalRow('Parcels owned', oi && oi.parcels_owned),
+      modalRow('Portfolio value', oi && oi.total_portfolio_value != null ? fmtUSD(oi.total_portfolio_value) : null),
+      modalRow('Last sale', oi && fmtDate(oi.last_sale_date)),
+      modalRow('Days since', oi && oi.days_since_last_sale),
+      modalRow('Owner state', (parcel && parcel.owner_state) || (oi && oi.owner_state)),
+    ].filter(Boolean).join('');
+    if (oRows) {
+      ownerHtml = `
+        <div class="modal-section">
+          <div class="modal-section-title">Owner Intelligence ${oi ? '<span class="badge">auction_owner_intel</span>' : '<span class="badge">zw_parcels</span>'}</div>
+          <div class="modal-grid">${oRows}</div>
+        </div>`;
+    }
+  }
+
+  // ML section
+  let mlHtml = '';
+  if (parcel && parcel.ml_score != null) {
+    const mlRows = [
+      modalRow('Score', `${Math.round(parcel.ml_score * 100)}/100`),
+      modalRow('Recommendation', parcel.ml_recommendation),
+      modalRow('Suggested max bid', parcel.ml_max_bid != null ? fmtUSD(parcel.ml_max_bid) : null),
+      modalRow('Senior liens', parcel.senior_liens),
+    ].filter(Boolean).join('');
+    if (mlRows) {
+      mlHtml = `
+        <div class="modal-section">
+          <div class="modal-section-title">ML Scoring <span class="badge">ZoneWise</span></div>
+          <div class="modal-grid">${mlRows}</div>
+        </div>`;
+    }
+  }
+
+  // Source footer
+  const dataSourceHtml = `
+    <div class="modal-section" style="font-size:10px; color:var(--text-dim); letter-spacing:0.04em;">
+      data: <span class="mono">multi_county_auctions</span>
+      ${parcel ? '+ <span class="mono">zw_parcels</span>' : ''}
+      ${oi ? '+ <span class="mono">auction_owner_intel</span>' : ''}
+      · last seen ${fmtDate(lot.last_seen_at) || '—'}
+    </div>`;
+
+  body.innerHTML = `
+    <div class="modal-hero">
+      <div class="modal-hero-photo">${heroPhoto}</div>
+      <div>
+        <div class="modal-pills">${pills.join('')}</div>
+        <div class="modal-title">${escapeHtml(lot.property_address || (parcel && parcel.site_addr) || '— address pending —')}</div>
+        <div class="modal-subtitle">Case ${escapeHtml(lot.case_number || '—')} · ${escapeHtml(lot.county || '?')} · auction ${fmtDate(lot.auction_date) || '—'}</div>
+      </div>
+    </div>
+    <div class="modal-stats">
+      ${stats.map(s => `
+        <div class="modal-stat">
+          <div class="modal-stat-label">${escapeHtml(s.label)}</div>
+          <div class="modal-stat-value ${s.value === '—' ? 'dim' : ''}">${escapeHtml(s.value)}</div>
+        </div>`).join('')}
+    </div>
+    <div class="modal-actions">${linkBtns.join('')}</div>
+    <div class="modal-section">
+      <div class="modal-section-title">Property</div>
+      <div class="modal-grid">${propRows}</div>
+    </div>
+    ${zoningHtml}
+    ${ownerHtml}
+    ${mlHtml}
+    ${dataSourceHtml}
+  `;
+}
 </script>
+<!-- ── MODAL OVERLAY for lot detail ──────────────────────── -->
+<div class="modal-overlay" id="lot-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-panel" id="lot-modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <span class="case mono" id="lm-case">—</span>
+      </div>
+      <button class="modal-close" id="lm-close" aria-label="close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="lm-body">
+      <div class="ai-empty">Loading lot detail…</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
